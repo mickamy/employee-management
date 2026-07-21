@@ -47,7 +47,7 @@ jobs:
           go-version-file: go.mod
 
       - name: Inject .env file
-        run: envsubst < .env.example > .env
+        uses: ./.github/actions/inject-env
 
       - name: Run migrations
         run: make db-migrate
@@ -65,7 +65,7 @@ jobs:
           go-version-file: go.mod
 
       - name: Inject .env file
-        run: envsubst < .env.example > .env
+        uses: ./.github/actions/inject-env
 
       - name: Build binary
         run: make build
@@ -79,14 +79,34 @@ jobs:
         with:
           setup_only: true
 
+      - name: Inject .env file
+        uses: ./.github/actions/inject-env
+
       - name: Lint protos
         run: buf lint
 
       - name: Check generated code is up to date
         run: |
-          buf generate
+          make gen-buf
           test -z "$(git status --porcelain gen)" || { git status --porcelain gen; exit 1; }
 
       - name: Check breaking changes
         if: github.ref != 'refs/heads/main'
         run: buf breaking --against "https://github.com/${{ github.repository }}.git#branch=main"
+
+  sqlc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Inject .env file
+        uses: ./.github/actions/inject-env
+
+      - name: Check generated queries are up to date
+        run: |
+          make gen-sqlc
+          test -z "$(git status --porcelain)" || { git status --porcelain; exit 1; }
