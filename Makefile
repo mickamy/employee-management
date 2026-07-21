@@ -39,12 +39,12 @@ db-migrate:
 	$(GOOSE) postgres "$(DATABASE_URL)" up
 
 db-create:
-	docker compose exec db psql -U $(DB_USER) -d postgres -tAc \
+	docker compose exec -T db psql -U $(DB_USER) -d postgres -tAc \
 		"SELECT 1 FROM pg_database WHERE datname = '$(DB_NAME)'" | grep -q 1 || \
-		docker compose exec db createdb -U $(DB_USER) $(DB_NAME)
+		docker compose exec -T db createdb -U $(DB_USER) $(DB_NAME)
 
 db-drop:
-	docker compose exec db dropdb -U $(DB_USER) --force --if-exists $(DB_NAME)
+	docker compose exec -T db dropdb -U $(DB_USER) --force --if-exists $(DB_NAME)
 
 db-reset: db-drop db-create db-migrate
 
