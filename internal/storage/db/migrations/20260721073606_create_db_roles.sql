@@ -34,16 +34,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO ap
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO app_reader;
 
 -- +goose Down
-ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE SELECT, INSERT, UPDATE, DELETE ON TABLES FROM app_writer;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE USAGE, SELECT ON SEQUENCES FROM app_writer;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE SELECT ON TABLES FROM app_reader;
-REVOKE ALL ON SCHEMA public FROM app_writer, app_reader;
--- +goose StatementBegin
-DO $$
-BEGIN
-  EXECUTE 'REVOKE CONNECT ON DATABASE ' || quote_ident(current_database()) || ' FROM app_writer, app_reader';
-END
-$$;
--- +goose StatementEnd
+-- DROP OWNED revokes every privilege granted to these roles in the current
+-- database and on shared objects (CONNECT), including per-object grants and
+-- default-privilege entries that schema-level REVOKE would miss. The roles
+-- own no objects here.
+DROP OWNED BY app_writer, app_reader;
 DROP ROLE IF EXISTS app_writer;
 DROP ROLE IF EXISTS app_reader;
