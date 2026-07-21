@@ -43,4 +43,3 @@ make compose-up-d # start dependencies via docker compose
 make db-migrate   # apply migrations (goose)
 go run ./cmd/server
 ```
-

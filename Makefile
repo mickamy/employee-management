@@ -1,8 +1,8 @@
--include .env
+include .env
 export DATABASE_URL DATABASE_WRITER_URL DATABASE_READER_URL
 
 BUILD_DIR = bin
-GOOSE = go tool -modfile=tools/go.mod goose -dir internal/storage/db/migrations
+GOOSE = go tool -modfile=tools/go.mod goose -dir internal/storage/db/migrate/sql
 DB_USER = app
 DB_NAME = employee_management
 
