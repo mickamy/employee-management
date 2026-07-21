@@ -1,5 +1,5 @@
 -include .env
-export DATABASE_URL
+export DATABASE_URL DATABASE_WRITER_URL DATABASE_READER_URL
 
 BUILD_DIR = bin
 GOOSE = go tool -modfile=tools/go.mod goose -dir internal/storage/db/migrations
