@@ -2,8 +2,12 @@
 -- +goose StatementBegin
 DO $$
 BEGIN
+  -- Role creation here serves local development and CI. In environments where
+  -- the migration runner lacks CREATEROLE (managed databases), pre-provision
+  -- these roles via infrastructure tooling; creation is then skipped and only
+  -- the grants below apply. Passwords are local/CI values — production
+  -- rotates them out-of-band via ALTER ROLE.
   IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'app_writer') THEN
-    -- Local/CI password. Production rotates it out-of-band via ALTER ROLE.
     CREATE ROLE app_writer LOGIN PASSWORD 'password';
   END IF;
   IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'app_reader') THEN
