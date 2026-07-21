@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
+	"github.com/stretchr/testify/require"
 	"google.golang.org/genproto/googleapis/type/date"
 
 	assignmentv1 "github.com/mickamy/employee-management/gen/assignment/v1"
@@ -140,12 +141,8 @@ func TestHandler(t *testing.T) {
 			t.Parallel()
 
 			err := tt.call(t.Context(), ts.Client(), ts.URL)
-			if err == nil {
-				t.Fatal("want error, got nil")
-			}
-			if got := connect.CodeOf(err); got != tt.want {
-				t.Fatalf("connect.CodeOf(err) = %v, want %v (err: %v)", got, tt.want, err)
-			}
+			require.Error(t, err)
+			require.Equal(t, tt.want, connect.CodeOf(err))
 		})
 	}
 }
@@ -155,7 +152,7 @@ func TestNew(t *testing.T) {
 
 	srv := server.New(":0")
 
-	if srv.Protocols == nil || !srv.Protocols.HTTP1() || !srv.Protocols.UnencryptedHTTP2() {
-		t.Fatalf("Protocols = %v, want HTTP/1.1 and unencrypted HTTP/2 enabled", srv.Protocols)
-	}
+	require.NotNil(t, srv.Protocols)
+	require.True(t, srv.Protocols.HTTP1())
+	require.True(t, srv.Protocols.UnencryptedHTTP2())
 }

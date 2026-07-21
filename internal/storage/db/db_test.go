@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/stretchr/testify/require"
 
 	"github.com/mickamy/employee-management/internal/storage/db"
 )
@@ -18,9 +19,7 @@ func TestNew(t *testing.T) {
 	}
 
 	pool, err := db.New(t.Context(), url)
-	if err != nil {
-		t.Fatalf("db.New() error = %v", err)
-	}
+	require.NoError(t, err)
 	pool.Close()
 }
 
@@ -33,12 +32,10 @@ func TestNewWriter(t *testing.T) {
 	}
 
 	w, err := db.NewWriter(t.Context(), url)
-	if err != nil {
-		t.Fatalf("db.NewWriter() error = %v", err)
-	}
+	require.NoError(t, err)
 	defer w.Close()
 
-	assertCurrentUser(t, w.Pool, "app_writer")
+	requireCurrentUser(t, w.Pool, "app_writer")
 }
 
 func TestNewReader(t *testing.T) {
@@ -50,31 +47,25 @@ func TestNewReader(t *testing.T) {
 	}
 
 	r, err := db.NewReader(t.Context(), url)
-	if err != nil {
-		t.Fatalf("db.NewReader() error = %v", err)
-	}
+	require.NoError(t, err)
 	defer r.Close()
 
-	assertCurrentUser(t, r.Pool, "app_reader")
+	requireCurrentUser(t, r.Pool, "app_reader")
 }
 
-func assertCurrentUser(t *testing.T, pool *pgxpool.Pool, want string) {
+func requireCurrentUser(t *testing.T, pool *pgxpool.Pool, want string) {
 	t.Helper()
 
 	var got string
-	if err := pool.QueryRow(t.Context(), "SELECT current_user").Scan(&got); err != nil {
-		t.Fatalf("query current_user: %v", err)
-	}
-	if got != want {
-		t.Fatalf("current_user = %q, want %q", got, want)
-	}
+	err := pool.QueryRow(t.Context(), "SELECT current_user").Scan(&got)
+	require.NoError(t, err)
+	require.Equal(t, want, got)
 }
 
 func TestNewUnreachable(t *testing.T) {
 	t.Parallel()
 
 	url := "postgres://127.0.0.1:1/nowhere?connect_timeout=1"
-	if _, err := db.New(t.Context(), url); err == nil {
-		t.Fatal("want error, got nil")
-	}
+	_, err := db.New(t.Context(), url)
+	require.Error(t, err)
 }
