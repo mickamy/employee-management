@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package assignment.v1;
+
+import "google/type/date.proto";
+
+// Role within an assignment. An employee's manager is derived from the MANAGER assignment in the same department.
+enum Position {
+  POSITION_UNSPECIFIED = 0;
+  POSITION_MEMBER = 1;
+  // Department head.
+  POSITION_MANAGER = 2;
+}
+
+// Assignment of an employee to a department, from start to release.
+message Assignment {
+  string id = 1;
+  string employee_id = 2;
+  string department_id = 3;
+  Position position = 4;
+  google.type.Date assigned_on = 5;
+  // Unset while the assignment is active.
+  google.type.Date released_on = 6;
+}
+
+// Read model entry for an employee's manager history, derived from the
+// employee's assignments and the MANAGER assignments of their departments.
+message ManagerTenure {
+  string manager_employee_id = 1;
+  // Resolved from the employee context at query time.
+  string manager_name = 2;
+  string department_id = 3;
+  google.type.Date started_on = 4;
+  // Unset while the tenure is ongoing.
+  google.type.Date ended_on = 5;
+}

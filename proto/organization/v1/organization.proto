@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package organization.v1;
+
+import "buf/validate/validate.proto";
+
+// Flat for now. The department tree and reorganizations (generation-based, with as-of queries) are a future slice.
+message Department {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+}
+
+service OrganizationService {
+  rpc CreateDepartment(CreateDepartmentRequest) returns (CreateDepartmentResponse);
+  rpc RenameDepartment(RenameDepartmentRequest) returns (RenameDepartmentResponse);
+  rpc ListDepartments(ListDepartmentsRequest) returns (ListDepartmentsResponse);
+}
+
+message CreateDepartmentRequest {
+  string code = 1 [(buf.validate.field).string = {min_len: 1, max_len: 64}];
+  string name = 2 [(buf.validate.field).string = {min_len: 1, max_len: 255}];
+}
+
+message CreateDepartmentResponse {
+  Department department = 1;
+}
+
+message RenameDepartmentRequest {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string = {min_len: 1, max_len: 255}];
+}
+
+message RenameDepartmentResponse {
+  Department department = 1;
+}
+
+message ListDepartmentsRequest {}
+
+message ListDepartmentsResponse {
+  repeated Department departments = 1;
+}

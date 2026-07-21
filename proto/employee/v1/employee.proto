@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package employee.v1;
+
+import "buf/validate/validate.proto";
+import "google/type/date.proto";
+
+// Employee master data. PII stays within this context.
+message Employee {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+  string email = 4;
+  google.type.Date hired_on = 5;
+}
+
+service EmployeeService {
+  rpc HireEmployee(HireEmployeeRequest) returns (HireEmployeeResponse);
+  rpc GetEmployee(GetEmployeeRequest) returns (GetEmployeeResponse);
+  rpc ListEmployees(ListEmployeesRequest) returns (ListEmployeesResponse);
+}
+
+message HireEmployeeRequest {
+  string code = 1 [(buf.validate.field).string = {min_len: 1, max_len: 64}];
+  string name = 2 [(buf.validate.field).string = {min_len: 1, max_len: 255}];
+  string email = 3 [(buf.validate.field).string = {email: true, max_len: 254}];
+  google.type.Date hired_on = 4 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).cel = {
+      id: "hired_on.valid"
+      message: "hired_on must be a valid calendar date"
+      expression: "this.year >= 1 && this.month >= 1 && this.month <= 12 && this.day >= 1 && this.day <= 31"
+    }
+  ];
+}
+
+message HireEmployeeResponse {
+  Employee employee = 1;
+}
+
+message GetEmployeeRequest {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+}
+
+message GetEmployeeResponse {
+  Employee employee = 1;
+}
+
+message ListEmployeesRequest {
+  int32 page_size = 1 [(buf.validate.field).int32 = {gte: 0, lte: 100}];
+  string page_token = 2;
+}
+
+message ListEmployeesResponse {
+  repeated Employee employees = 1;
+  string next_page_token = 2;
+}
