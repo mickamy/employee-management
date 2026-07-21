@@ -59,6 +59,11 @@ jobs:
       - name: Lint protos
         run: buf lint
 
+      - name: Check generated code is up to date
+        run: |
+          buf generate
+          test -z "$(git status --porcelain gen)" || { git status --porcelain gen; exit 1; }
+
       - name: Check breaking changes
         if: github.ref != 'refs/heads/main'
         run: buf breaking --against "https://github.com/${{ github.repository }}.git#branch=main"
