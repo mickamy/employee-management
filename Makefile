@@ -6,7 +6,21 @@ GOOSE = go tool -modfile=tools/go.mod goose -dir internal/storage/db/migrate/sql
 DB_USER = app
 DB_NAME = employee_management
 
-.PHONY: build clean test lint compose-up compose-up-d compose-down db-migrate db-create db-drop db-reset new-migration
+.PHONY: build \
+		clean \
+		test \
+		lint \
+		compose-up \
+		compose-up-d \
+		compose-down \
+		db-create \
+		db-drop \
+		db-migrate \
+		db-reset \
+		gen \
+		gen-buf \
+		gen-sqlc \
+		new-migration \
 
 build:
 	@mkdir -p $(BUILD_DIR)
@@ -35,12 +49,6 @@ compose-up-d:
 compose-down:
 	docker compose down
 
-# Applies migrations to whatever DATABASE_URL points at — this is the
-# deployment path. Destructive targets (db-create / db-drop) stay local-only
-# via docker compose exec.
-db-migrate:
-	$(GOOSE) postgres "$(DATABASE_URL)" up
-
 db-create:
 	docker compose exec -T db psql -U $(DB_USER) -d postgres -tAc \
 		"SELECT 1 FROM pg_database WHERE datname = '$(DB_NAME)'" | grep -q 1 || \
@@ -49,7 +57,21 @@ db-create:
 db-drop:
 	docker compose exec -T db dropdb -U $(DB_USER) --force --if-exists $(DB_NAME)
 
+# Applies migrations to whatever DATABASE_URL points at — this is the
+# deployment path. Destructive targets (db-create / db-drop) stay local-only
+# via docker compose exec.
+db-migrate:
+	$(GOOSE) postgres "$(DATABASE_URL)" up
+
 db-reset: db-drop db-create db-migrate
+
+gen: gen-buf gen-sqlc
+
+gen-buf:
+	buf generate
+
+gen-sqlc:
+	go tool -modfile=tools/go.mod sqlc generate
 
 new-migration:
 	@if [ -z "$(name)" ]; then \
