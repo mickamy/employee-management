@@ -7,6 +7,7 @@ package migrate
 import (
 	"context"
 	"embed"
+	"errors"
 	"fmt"
 	"io/fs"
 
@@ -20,7 +21,7 @@ import (
 var migrations embed.FS
 
 // Up applies all pending migrations through the given admin pool.
-func Up(ctx context.Context, pool *pgxpool.Pool) error {
+func Up(ctx context.Context, pool *pgxpool.Pool) (err error) {
 	fsys, err := fs.Sub(migrations, "sql")
 	if err != nil {
 		return fmt.Errorf("sub filesystem: %w", err)
@@ -29,9 +30,9 @@ func Up(ctx context.Context, pool *pgxpool.Pool) error {
 	if err != nil {
 		return fmt.Errorf("create goose provider: %w", err)
 	}
-	defer func(provider *goose.Provider) {
-		_ = provider.Close()
-	}(provider)
+	defer func() {
+		err = errors.Join(err, provider.Close())
+	}()
 
 	if _, err := provider.Up(ctx); err != nil {
 		return fmt.Errorf("apply migrations: %w", err)
