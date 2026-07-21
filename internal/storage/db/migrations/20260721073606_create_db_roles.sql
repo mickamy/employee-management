@@ -13,7 +13,14 @@ END
 $$;
 -- +goose StatementEnd
 
-GRANT CONNECT ON DATABASE employee_management TO app_writer, app_reader;
+-- +goose StatementBegin
+DO $$
+BEGIN
+  EXECUTE 'GRANT CONNECT ON DATABASE ' || quote_ident(current_database()) || ' TO app_writer, app_reader';
+END
+$$;
+-- +goose StatementEnd
+
 GRANT USAGE ON SCHEMA public TO app_writer, app_reader;
 
 -- Tables and sequences created by the role running migrations pick these up automatically.
@@ -27,6 +34,12 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE SELECT, INSERT, UPDATE, DELETE 
 ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE USAGE, SELECT ON SEQUENCES FROM app_writer;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE SELECT ON TABLES FROM app_reader;
 REVOKE ALL ON SCHEMA public FROM app_writer, app_reader;
-REVOKE CONNECT ON DATABASE employee_management FROM app_writer, app_reader;
+-- +goose StatementBegin
+DO $$
+BEGIN
+  EXECUTE 'REVOKE CONNECT ON DATABASE ' || quote_ident(current_database()) || ' FROM app_writer, app_reader';
+END
+$$;
+-- +goose StatementEnd
 DROP ROLE IF EXISTS app_writer;
 DROP ROLE IF EXISTS app_reader;
