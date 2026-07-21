@@ -35,6 +35,9 @@ compose-up-d:
 compose-down:
 	docker compose down
 
+# Applies migrations to whatever DATABASE_URL points at — this is the
+# deployment path. Destructive targets (db-create / db-drop) stay local-only
+# via docker compose exec.
 db-migrate:
 	$(GOOSE) postgres "$(DATABASE_URL)" up
 
