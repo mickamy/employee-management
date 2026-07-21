@@ -36,9 +36,9 @@ func Handler() http.Handler {
 
 // New returns an HTTP server serving Handler on addr.
 //
-// TLS terminates at the reverse proxy (https-portal); this server is not
-// exposed directly. Unencrypted HTTP/2 keeps gRPC clients, which require
-// HTTP/2, working inside the network.
+// The server is meant to run behind a TLS-terminating reverse proxy
+// (https-portal) and must not be exposed directly. Unencrypted HTTP/2 keeps
+// gRPC clients, which require HTTP/2, working inside the network.
 func New(addr string) *http.Server {
 	protocols := new(http.Protocols)
 	protocols.SetHTTP1(true)
