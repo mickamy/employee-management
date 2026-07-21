@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -28,14 +29,19 @@ func run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	var lc net.ListenConfig
+	ln, err := lc.Listen(ctx, "tcp", srv.Addr)
+	if err != nil {
+		return fmt.Errorf("listen on %s: %w", srv.Addr, err)
+	}
+	slog.Info("server listening", "addr", ln.Addr().String())
+
 	errCh := make(chan error, 1)
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			errCh <- fmt.Errorf("listen and serve: %w", err)
+		if err := srv.Serve(ln); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			errCh <- fmt.Errorf("serve: %w", err)
 		}
 	}()
-
-	slog.Info("server listening", "addr", srv.Addr)
 
 	select {
 	case err := <-errCh:
