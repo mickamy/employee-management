@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -24,7 +25,8 @@ func main() {
 }
 
 func run() error {
-	srv := server.New(":" + cmp.Or(os.Getenv("PORT"), "8080"))
+	port := strings.TrimPrefix(cmp.Or(os.Getenv("PORT"), "8080"), ":")
+	srv := server.New(":" + port)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
