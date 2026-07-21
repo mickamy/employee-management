@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package assignment.v1;
+
+import "assignment/v1/assignment.proto";
+import "buf/validate/validate.proto";
+import "google/type/date.proto";
+
+service AssignmentCommandService {
+  rpc AssignEmployee(AssignEmployeeRequest) returns (AssignEmployeeResponse);
+  rpc ReleaseAssignment(ReleaseAssignmentRequest) returns (ReleaseAssignmentResponse);
+  // Revokes an assignment decision that has not yet taken effect. Undoing an
+  // assignment already in effect is a release, not a revocation.
+  rpc RevokeAssignment(RevokeAssignmentRequest) returns (RevokeAssignmentResponse);
+}
+
+message AssignEmployeeRequest {
+  string employee_id = 1 [(buf.validate.field).string.uuid = true];
+  string department_id = 2 [(buf.validate.field).string.uuid = true];
+  Position position = 3 [(buf.validate.field).enum = {defined_only: true, not_in: [0]}];
+  google.type.Date assigned_on = 4 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).cel = {
+      id: "assigned_on.valid"
+      message: "assigned_on must be a valid calendar date"
+      expression: "this.year >= 1 && this.month >= 1 && this.month <= 12 && this.day >= 1 && this.day <= 31"
+    }
+  ];
+}
+
+message AssignEmployeeResponse {
+  Assignment assignment = 1;
+  // Event stream revision. Pass it as min_revision on queries for read-your-writes.
+  int64 revision = 2;
+}
+
+message ReleaseAssignmentRequest {
+  string assignment_id = 1 [(buf.validate.field).string.uuid = true];
+  google.type.Date released_on = 2 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).cel = {
+      id: "released_on.valid"
+      message: "released_on must be a valid calendar date"
+      expression: "this.year >= 1 && this.month >= 1 && this.month <= 12 && this.day >= 1 && this.day <= 31"
+    }
+  ];
+}
+
+message ReleaseAssignmentResponse {
+  Assignment assignment = 1;
+  int64 revision = 2;
+}
+
+message RevokeAssignmentRequest {
+  string assignment_id = 1 [(buf.validate.field).string.uuid = true];
+  string reason = 2 [(buf.validate.field).string = {min_len: 1, max_len: 500}];
+}
+
+message RevokeAssignmentResponse {
+  int64 revision = 1;
+}

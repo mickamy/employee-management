@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package assignment.v1;
+
+import "assignment/v1/assignment.proto";
+import "buf/validate/validate.proto";
+
+service AssignmentQueryService {
+  rpc GetCurrentAssignment(GetCurrentAssignmentRequest) returns (GetCurrentAssignmentResponse);
+  rpc ListAssignmentHistory(ListAssignmentHistoryRequest) returns (ListAssignmentHistoryResponse);
+  rpc ListManagerHistory(ListManagerHistoryRequest) returns (ListManagerHistoryResponse);
+}
+
+message GetCurrentAssignmentRequest {
+  string employee_id = 1 [(buf.validate.field).string.uuid = true];
+  // Waits until the projection catches up to this revision. 0 means no waiting.
+  int64 min_revision = 2 [(buf.validate.field).int64.gte = 0];
+}
+
+message GetCurrentAssignmentResponse {
+  Assignment assignment = 1;
+}
+
+message ListAssignmentHistoryRequest {
+  string employee_id = 1 [(buf.validate.field).string.uuid = true];
+  int64 min_revision = 2 [(buf.validate.field).int64.gte = 0];
+}
+
+message ListAssignmentHistoryResponse {
+  repeated Assignment assignments = 1;
+}
+
+message ListManagerHistoryRequest {
+  string employee_id = 1 [(buf.validate.field).string.uuid = true];
+  int64 min_revision = 2 [(buf.validate.field).int64.gte = 0];
+}
+
+message ListManagerHistoryResponse {
+  repeated ManagerTenure tenures = 1;
+}
