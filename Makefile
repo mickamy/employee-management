@@ -27,7 +27,7 @@ lint:
 	golangci-lint run
 
 compose-up:
-	docker compose up --wait
+	docker compose up
 
 compose-up-d:
 	docker compose up -d --wait

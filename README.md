@@ -38,8 +38,8 @@ follows Kawashima's immutable data model — see [docs/data-modeling.md](docs/da
 ## Development
 
 ```sh
-cp .env.example .env
-make compose-up   # start dependencies via docker compose
+envsubst < .env.example > .env
+make compose-up-d # start dependencies via docker compose
 make db-migrate   # apply migrations (goose)
 go run ./cmd/server
 ```
