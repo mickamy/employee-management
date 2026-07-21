@@ -28,8 +28,19 @@ follows Kawashima's immutable data model — see [docs/data-modeling.md](docs/da
 ├── cmd/server/     # entry point
 ├── internal/
 │   ├── features/   # employee / organization / assignment (package by feature)
-│   └── platform/   # cross-feature infrastructure: event store, bus, etc.
+│   ├── server/     # composition root wiring Connect handlers
+│   └── storage/    # storage clients: db (PostgreSQL)
 ├── frontend/       # Remix v3 (BFF)
 ├── spec/           # implementation-agnostic acceptance tests
 └── docs/
 ```
+
+## Development
+
+```sh
+cp .env.example .env
+make compose-up   # start dependencies via docker compose
+make db-migrate   # apply migrations (goose)
+go run ./cmd/server
+```
+
