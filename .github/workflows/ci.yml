@@ -25,12 +25,33 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: employee_management
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d employee_management"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://app:password@127.0.0.1:5432/employee_management?sslmode=disable
+      DATABASE_WRITER_URL: postgres://app_writer:password@127.0.0.1:5432/employee_management?sslmode=disable
+      DATABASE_READER_URL: postgres://app_reader:password@127.0.0.1:5432/employee_management?sslmode=disable
     steps:
       - uses: actions/checkout@v6
 
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+
+      - name: Run migrations
+        run: make db-migrate
 
       - name: Run tests
         run: make test

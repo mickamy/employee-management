@@ -1,6 +1,12 @@
-BUILD_DIR = bin
+-include .env
+export DATABASE_URL DATABASE_WRITER_URL DATABASE_READER_URL
 
-.PHONY: build clean test lint
+BUILD_DIR = bin
+GOOSE = go tool -modfile=tools/go.mod goose -dir internal/storage/db/migrations
+DB_USER = app
+DB_NAME = employee_management
+
+.PHONY: build clean test lint compose-up compose-up-d compose-down db-migrate db-create db-drop db-reset new-migration
 
 build:
 	@mkdir -p $(BUILD_DIR)
@@ -19,3 +25,35 @@ lint:
 		exit 1; \
 	}
 	golangci-lint run
+
+compose-up:
+	docker compose up
+
+compose-up-d:
+	docker compose up -d --wait
+
+compose-down:
+	docker compose down
+
+# Applies migrations to whatever DATABASE_URL points at — this is the
+# deployment path. Destructive targets (db-create / db-drop) stay local-only
+# via docker compose exec.
+db-migrate:
+	$(GOOSE) postgres "$(DATABASE_URL)" up
+
+db-create:
+	docker compose exec -T db psql -U $(DB_USER) -d postgres -tAc \
+		"SELECT 1 FROM pg_database WHERE datname = '$(DB_NAME)'" | grep -q 1 || \
+		docker compose exec -T db createdb -U $(DB_USER) $(DB_NAME)
+
+db-drop:
+	docker compose exec -T db dropdb -U $(DB_USER) --force --if-exists $(DB_NAME)
+
+db-reset: db-drop db-create db-migrate
+
+new-migration:
+	@if [ -z "$(name)" ]; then \
+		echo "Error: name is required. Usage: make new-migration name=migration_name"; \
+		exit 1; \
+	fi
+	$(GOOSE) create $(name) sql
