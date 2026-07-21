@@ -37,7 +37,19 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO app_reader;
 -- DROP OWNED revokes every privilege granted to these roles in the current
 -- database and on shared objects (CONNECT), including per-object grants and
 -- default-privilege entries that schema-level REVOKE would miss. The roles
--- own no objects here.
-DROP OWNED BY app_writer, app_reader;
+-- own no objects here. Existence checks keep the down runnable when roles
+-- were removed out-of-band.
+-- +goose StatementBegin
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM pg_roles WHERE rolname = 'app_writer') THEN
+    DROP OWNED BY app_writer;
+  END IF;
+  IF EXISTS (SELECT FROM pg_roles WHERE rolname = 'app_reader') THEN
+    DROP OWNED BY app_reader;
+  END IF;
+END
+$$;
+-- +goose StatementEnd
 DROP ROLE IF EXISTS app_writer;
 DROP ROLE IF EXISTS app_reader;
