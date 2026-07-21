@@ -47,4 +47,8 @@ db-drop:
 db-reset: db-drop db-create db-migrate
 
 new-migration:
+	@if [ -z "$(name)" ]; then \
+		echo "Error: name is required. Usage: make new-migration name=migration_name"; \
+		exit 1; \
+	fi
 	$(GOOSE) create $(name) sql
