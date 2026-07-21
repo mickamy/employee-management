@@ -64,6 +64,7 @@ linters:
         linters:
           - gocyclo    # Each table case adds branches, so cyclomatic complexity climbs naturally and isn't a quality signal there.
           - maintidx   # Same: table-driven tests grow long by design and the maintainability index is not a useful signal there.
+          - wrapcheck  # Tests assert on returned errors directly; wrapping adds no context to a failing assertion.
 
 issues:
   max-issues-per-linter: 0
