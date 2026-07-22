@@ -21,7 +21,7 @@ func (infra *Infra) Close() error {
 	return nil
 }
 
-func provideWriter(ctx context.Context, cfg config.DatabaseConfig) (db.Writer, error) {
+func provideWriter(ctx context.Context, cfg config.Database) (db.Writer, error) {
 	writer, err := db.NewWriter(ctx, cfg.WriterURL)
 	if err != nil {
 		return db.Writer{}, fmt.Errorf("new writer: %w", err)
@@ -29,7 +29,7 @@ func provideWriter(ctx context.Context, cfg config.DatabaseConfig) (db.Writer, e
 	return writer, nil
 }
 
-func provideReader(ctx context.Context, cfg config.DatabaseConfig) (db.Reader, error) {
+func provideReader(ctx context.Context, cfg config.Database) (db.Reader, error) {
 	reader, err := db.NewReader(ctx, cfg.ReaderURL)
 	if err != nil {
 		return db.Reader{}, fmt.Errorf("new reader: %w", err)

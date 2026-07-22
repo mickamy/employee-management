@@ -8,13 +8,13 @@ import (
 	"github.com/mickamy/employee-management/internal/lib/validator"
 )
 
-type DatabaseConfig struct {
+type Database struct {
 	WriterURL string `env:"DATABASE_WRITER_URL" validate:"required"`
 	ReaderURL string `env:"DATABASE_READER_URL" validate:"required"`
 }
 
-func Database() DatabaseConfig {
-	var config DatabaseConfig
+func ParseDatabase() Database {
+	var config Database
 	if err := env.Parse(&config); err != nil {
 		panic(err)
 	}
