@@ -18,6 +18,7 @@ linters:
           files:
             - "!$test"
             - "!**/internal/storage/db/migrate/**"
+            - "!**/internal/test/**"
           deny:
             - pkg: github.com/mickamy/employee-management/internal/storage/db/migrate
               desc: the migrate runner is test-only; deployments use the goose CLI (make db-migrate)
@@ -33,6 +34,11 @@ linters:
         rules:
           json: snake
           yaml: snake
+    wrapcheck:
+      ignore-package-globs:
+        # aerrors and cerrors construct errors; wrapping them defeats the purpose.
+        - github.com/mickamy/employee-management/internal/errors/aerrors
+        - github.com/mickamy/employee-management/internal/errors/cerrors
     usetesting:
       context-background: true
       context-todo: true
