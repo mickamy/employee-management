@@ -13,15 +13,14 @@ import (
 	"github.com/mickamy/employee-management/gen/organization/v1/organizationv1connect"
 )
 
-// Handler returns the HTTP handler serving every Connect service.
+// Handler returns the HTTP handler serving every Connect service. Services
+// not yet implemented keep their generated Unimplemented handlers.
 // Integration tests can mount it on an httptest.Server instead of running the binary.
-func Handler() http.Handler {
+func Handler(employee employeev1connect.EmployeeServiceHandler) http.Handler {
 	opts := connect.WithInterceptors(validate.NewInterceptor())
 
 	mux := http.NewServeMux()
-	mux.Handle(employeev1connect.NewEmployeeServiceHandler(
-		employeev1connect.UnimplementedEmployeeServiceHandler{}, opts,
-	))
+	mux.Handle(employeev1connect.NewEmployeeServiceHandler(employee, opts))
 	mux.Handle(assignmentv1connect.NewAssignmentCommandServiceHandler(
 		assignmentv1connect.UnimplementedAssignmentCommandServiceHandler{}, opts,
 	))
@@ -39,14 +38,14 @@ func Handler() http.Handler {
 // The server is meant to run behind a TLS-terminating reverse proxy
 // (https-portal) and must not be exposed directly. Unencrypted HTTP/2 keeps
 // gRPC clients, which require HTTP/2, working inside the network.
-func New(addr string) *http.Server {
+func New(addr string, employee employeev1connect.EmployeeServiceHandler) *http.Server {
 	protocols := new(http.Protocols)
 	protocols.SetHTTP1(true)
 	protocols.SetUnencryptedHTTP2(true)
 
 	return &http.Server{
 		Addr:              addr,
-		Handler:           Handler(),
+		Handler:           Handler(employee),
 		ReadHeaderTimeout: 10 * time.Second,
 		Protocols:         protocols,
 	}

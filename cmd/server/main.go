@@ -14,6 +14,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/mickamy/employee-management/internal/di"
+	"github.com/mickamy/employee-management/internal/feature/employee/handler"
 	"github.com/mickamy/employee-management/internal/server"
 )
 
@@ -25,11 +27,21 @@ func main() {
 }
 
 func run() error {
-	port := strings.TrimPrefix(cmp.Or(os.Getenv("PORT"), "8080"), ":")
-	srv := server.New(":" + port)
-
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	infra, err := di.NewInfra(ctx, di.NewConfig())
+	if err != nil {
+		return fmt.Errorf("build infrastructure: %w", err)
+	}
+	defer func() {
+		_ = infra.Close()
+	}()
+
+	employee := handler.NewHandler(*infra)
+
+	port := strings.TrimPrefix(cmp.Or(os.Getenv("PORT"), "8080"), ":")
+	srv := server.New(":"+port, employee)
 
 	var lc net.ListenConfig
 	ln, err := lc.Listen(ctx, "tcp", srv.Addr)

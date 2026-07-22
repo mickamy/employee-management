@@ -27,7 +27,7 @@ follows Kawashima's immutable data model — see [docs/data-modeling.md](docs/da
 ├── gen/            # buf generate output (Go)
 ├── cmd/server/     # entry point
 ├── internal/
-│   ├── features/   # employee / organization / assignment (package by feature)
+│   ├── feature/    # employee / organization / assignment (package by feature)
 │   ├── server/     # composition root wiring Connect handlers
 │   └── storage/    # storage clients: db (PostgreSQL)
 ├── frontend/       # Remix v3 (BFF)
@@ -40,6 +40,6 @@ follows Kawashima's immutable data model — see [docs/data-modeling.md](docs/da
 ```sh
 envsubst < .env.example > .env
 make compose-up-d # start dependencies via docker compose
-make db-migrate   # apply migrations (goose)
+make tdb-migrate   # apply migrations (goose)
 go run ./cmd/server
 ```

@@ -24,7 +24,7 @@ const validUUID = "5b8f6f6e-7c1a-4b7e-9d2a-1f3e4d5c6b7a"
 func TestHandler(t *testing.T) {
 	t.Parallel()
 
-	ts := httptest.NewServer(server.Handler())
+	ts := httptest.NewServer(server.Handler(employeev1connect.UnimplementedEmployeeServiceHandler{}))
 	t.Cleanup(ts.Close)
 
 	tests := []struct {
@@ -150,7 +150,7 @@ func TestHandler(t *testing.T) {
 func TestNew(t *testing.T) {
 	t.Parallel()
 
-	srv := server.New(":0")
+	srv := server.New(":0", employeev1connect.UnimplementedEmployeeServiceHandler{})
 
 	require.NotNil(t, srv.Protocols)
 	require.True(t, srv.Protocols.HTTP1())
