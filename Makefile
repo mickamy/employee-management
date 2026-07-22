@@ -19,6 +19,8 @@ DB_NAME = employee_management
 		db-reset \
 		gen \
 		gen-buf \
+		gen-go \
+		gen-injector \
 		gen-sqlc \
 		new-migration \
 
@@ -65,10 +67,20 @@ db-migrate:
 
 db-reset: db-drop db-create db-migrate
 
-gen: gen-buf gen-sqlc
+gen: gen-buf gen-go gen-injector gen-sqlc
 
 gen-buf:
+	@command -v buf >/dev/null 2>&1 || { \
+		echo "buf is not installed"; \
+		exit 1; \
+	}
 	buf generate
+
+gen-go:
+	go generate ./...
+
+gen-injector:
+	go tool -modfile=tools/go.mod injector ./...
 
 gen-sqlc:
 	go tool -modfile=tools/go.mod sqlc generate

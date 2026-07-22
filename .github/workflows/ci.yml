@@ -94,7 +94,7 @@ jobs:
         if: github.ref != 'refs/heads/main'
         run: buf breaking --against "https://github.com/${{ github.repository }}.git#branch=main"
 
-  sqlc:
+  codegen:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -106,7 +106,7 @@ jobs:
       - name: Inject .env file
         uses: ./.github/actions/inject-env
 
-      - name: Check generated queries are up to date
+      - name: Check generated code is up to date
         run: |
-          make gen-sqlc
+          make gen-go gen-sqlc gen-injector
           test -z "$(git status --porcelain)" || { git status --porcelain; exit 1; }
