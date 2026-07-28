@@ -14,7 +14,7 @@ func Recovery() connect.UnaryInterceptorFunc {
 		return func(
 			ctx context.Context,
 			req connect.AnyRequest,
-		) (resp connect.AnyResponse, err error) {
+		) (res connect.AnyResponse, err error) {
 			defer func() {
 				if r := recover(); r != nil {
 					buf := make([]byte, 4096)
@@ -24,7 +24,7 @@ func Recovery() connect.UnaryInterceptorFunc {
 						"procedure", req.Spec().Procedure,
 						"stack", string(buf[:n]),
 					)
-					resp = nil
+					res = nil
 					err = connect.NewError(connect.CodeInternal, errInternal)
 				}
 			}()
