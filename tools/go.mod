@@ -44,7 +44,7 @@ require (
 	github.com/mattn/go-isatty v0.0.21 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/mfridman/xflag v0.1.0 // indirect
-	github.com/mickamy/injector v0.2.7 // indirect
+	github.com/mickamy/injector v0.2.8 // indirect
 	github.com/microsoft/go-mssqldb v1.10.0 // indirect
 	github.com/ncruces/go-sqlite3 v0.32.0 // indirect
 	github.com/ncruces/go-strftime v1.0.0 // indirect
