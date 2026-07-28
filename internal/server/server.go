@@ -17,22 +17,22 @@ import (
 // Handler returns the HTTP handler serving every Connect service. Services
 // not yet implemented keep their generated Unimplemented handlers.
 // Integration tests can mount it on an httptest.Server instead of running the binary.
-func Handler(cfg di.Config, employee employeev1connect.EmployeeServiceHandler) http.Handler {
+func Handler(cfg di.Config, handlers Handlers) http.Handler {
 	opts := []connect.HandlerOption{
 		interceptor.Option(cfg),
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle(employeev1connect.NewEmployeeServiceHandler(employee, opts...))
+
 	mux.Handle(assignmentv1connect.NewAssignmentCommandServiceHandler(
 		assignmentv1connect.UnimplementedAssignmentCommandServiceHandler{}, opts...,
 	))
 	mux.Handle(assignmentv1connect.NewAssignmentQueryServiceHandler(
 		assignmentv1connect.UnimplementedAssignmentQueryServiceHandler{}, opts...,
 	))
-	mux.Handle(organizationv1connect.NewOrganizationServiceHandler(
-		organizationv1connect.UnimplementedOrganizationServiceHandler{}, opts...,
-	))
+	mux.Handle(employeev1connect.NewEmployeeServiceHandler(handlers.Employee, opts...))
+	mux.Handle(organizationv1connect.NewOrganizationServiceHandler(handlers.Organization, opts...))
+
 	return mux
 }
 
@@ -41,14 +41,14 @@ func Handler(cfg di.Config, employee employeev1connect.EmployeeServiceHandler) h
 // The server is meant to run behind a TLS-terminating reverse proxy
 // (https-portal) and must not be exposed directly. Unencrypted HTTP/2 keeps
 // gRPC clients, which require HTTP/2, working inside the network.
-func New(addr string, cfg di.Config, employee employeev1connect.EmployeeServiceHandler) *http.Server {
+func New(addr string, cfg di.Config, handlers Handlers) *http.Server {
 	protocols := new(http.Protocols)
 	protocols.SetHTTP1(true)
 	protocols.SetUnencryptedHTTP2(true)
 
 	return &http.Server{
 		Addr:              addr,
-		Handler:           Handler(cfg, employee),
+		Handler:           Handler(cfg, handlers),
 		ReadHeaderTimeout: 10 * time.Second,
 		Protocols:         protocols,
 	}
