@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/mickamy/employee-management/internal/errors/aerrors"
 	"github.com/mickamy/employee-management/internal/feature/employee/fixture"
 	"github.com/mickamy/employee-management/internal/feature/employee/repository"
 	"github.com/mickamy/employee-management/internal/storage/tx"
 	"github.com/mickamy/employee-management/internal/test/tdb"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestEmployee_Find(t *testing.T) {

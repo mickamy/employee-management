@@ -56,7 +56,7 @@ const (
 )
 
 type App struct {
-	Env        Env      `env:"ENV" envDefault:"development"`
+	Env        Env      `env:"ENV"         envDefault:"development"`
 	LogLevel   LogLevel `env:"LOG_LEVEL"`
 	ModuleRoot string   `env:"MODULE_ROOT" validate:"required"`
 }

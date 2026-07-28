@@ -8,9 +8,10 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/mickamy/employee-management/internal/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/mickamy/employee-management/internal/config"
 
 	"github.com/mickamy/employee-management/internal/storage/db"
 	"github.com/mickamy/employee-management/internal/storage/db/migrate"

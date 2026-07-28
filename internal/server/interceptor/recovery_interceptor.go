@@ -5,12 +5,12 @@ import (
 	"runtime"
 
 	"connectrpc.com/connect"
+
 	"github.com/mickamy/employee-management/internal/lib/logger"
 )
 
 func Recovery() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
-
 		return func(
 			ctx context.Context,
 			req connect.AnyRequest,

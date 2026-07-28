@@ -13,10 +13,11 @@ import (
 	"testing"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/mickamy/employee-management/internal/config"
-	"github.com/mickamy/employee-management/internal/storage/tx"
 	"github.com/peterldowns/pgtestdb"
 	"github.com/stretchr/testify/require"
+
+	"github.com/mickamy/employee-management/internal/config"
+	"github.com/mickamy/employee-management/internal/storage/tx"
 
 	"github.com/mickamy/employee-management/internal/storage/db"
 	"github.com/mickamy/employee-management/internal/storage/db/migrate"

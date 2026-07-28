@@ -9,14 +9,15 @@ import (
 	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"github.com/mickamy/contest"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"google.golang.org/genproto/googleapis/type/date"
+
 	"github.com/mickamy/employee-management/gen/employee/v1/employeev1connect"
 	"github.com/mickamy/employee-management/internal/feature/employee/fixture"
 	"github.com/mickamy/employee-management/internal/feature/employee/model"
 	"github.com/mickamy/employee-management/internal/lib/converters"
 	"github.com/mickamy/employee-management/internal/server/interceptor"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"google.golang.org/genproto/googleapis/type/date"
 
 	employeev1 "github.com/mickamy/employee-management/gen/employee/v1"
 	"github.com/mickamy/employee-management/internal/di"
@@ -93,7 +94,6 @@ func TestHandler_GetNotFound(t *testing.T) {
 }
 
 func TestHandler_ListPagination(t *testing.T) {
-
 	t.Parallel()
 
 	// arrange
@@ -125,7 +125,7 @@ func TestHandler_ListPagination(t *testing.T) {
 		Do().
 		ExpectStatus(http.StatusOK).
 		Out(&firstOut)
-	require.Equal(t, 2, len(firstOut.GetEmployees()))
+	require.Len(t, firstOut.GetEmployees(), 2)
 	require.NotEmpty(t, firstOut.GetNextPageToken())
 	var secondOut employeev1.ListEmployeesResponse
 	ct.
@@ -139,6 +139,6 @@ func TestHandler_ListPagination(t *testing.T) {
 		Out(&secondOut)
 
 	// assert
-	assert.Equal(t, 1, len(secondOut.GetEmployees()))
+	assert.Len(t, secondOut.GetEmployees(), 1)
 	assert.Empty(t, secondOut.GetNextPageToken())
 }
