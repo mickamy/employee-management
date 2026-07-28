@@ -3,14 +3,16 @@ package interceptor
 import (
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
+	"github.com/mickamy/employee-management/internal/di"
 )
 
-func NewInterceptors() []connect.Interceptor {
+func NewInterceptors(cfg di.Config) []connect.Interceptor {
 	return []connect.Interceptor{
+		Recovery(cfg.App),
 		validate.NewInterceptor(),
 	}
 }
 
-func Option() connect.Option {
-	return connect.WithInterceptors(NewInterceptors()...)
+func Option(cfg di.Config) connect.Option {
+	return connect.WithInterceptors(NewInterceptors(cfg)...)
 }
