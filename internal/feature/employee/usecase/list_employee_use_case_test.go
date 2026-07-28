@@ -21,6 +21,13 @@ func TestListEmployee_Do(t *testing.T) {
 	infra := tinfra.New(t)
 	employee1, hire1 := fixture.EmployeeAndHire()
 	employee2, hire2 := fixture.EmployeeAndHire()
+	// employee1 is inserted first but gets the larger id, so the returned
+	// order can only come from ORDER BY id, not from insertion order.
+	if employee1.ID.String() < employee2.ID.String() {
+		employee1.ID, employee2.ID = employee2.ID, employee1.ID
+		hire1.EmployeeID = employee1.ID
+		hire2.EmployeeID = employee2.ID
+	}
 	for _, m := range []struct {
 		employee model.Employee
 		hire     model.EmployeeHire
@@ -53,15 +60,6 @@ func TestListEmployee_Do(t *testing.T) {
 	// assert
 	require.NoError(t, err)
 	require.Len(t, out.Employees, 2)
-	for _, outEmployee := range out.Employees {
-		var expected model.Employee
-		for _, e := range []model.Employee{employee1, employee2} {
-			if e.ID == outEmployee.ID {
-				expected = e
-			}
-		}
-		require.NotEmpty(t, expected)
-		assert.Equal(t, expected, outEmployee)
-		assert.Equal(t, expected, outEmployee)
-	}
+	assert.Equal(t, employee2, out.Employees[0])
+	assert.Equal(t, employee1, out.Employees[1])
 }
