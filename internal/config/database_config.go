@@ -1,13 +1,5 @@
 package config
 
-import (
-	"context"
-
-	"github.com/caarlos0/env/v11"
-
-	"github.com/mickamy/employee-management/internal/lib/validator"
-)
-
 type Database struct {
 	AdminURL  string `env:"DATABASE_URL" validate:"required"`
 	WriterURL string `env:"DATABASE_WRITER_URL" validate:"required"`
@@ -15,12 +7,5 @@ type Database struct {
 }
 
 func ParseDatabase() Database {
-	var config Database
-	if err := env.Parse(&config); err != nil {
-		panic(err)
-	}
-	if err := validator.Struct(context.Background(), &config); err != nil {
-		panic(err)
-	}
-	return config
+	return parse[Database]()
 }

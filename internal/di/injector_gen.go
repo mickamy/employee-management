@@ -9,9 +9,11 @@ import (
 
 // NewConfig initializes dependencies and constructs Config.
 func NewConfig() *Config {
+	app := config.ParseApp()
 	database := config.ParseDatabase()
 
 	return &Config{
+		App:      app,
 		Database: database,
 	}
 }
