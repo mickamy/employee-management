@@ -8,6 +8,7 @@ import (
 	"github.com/mickamy/employee-management/internal/feature/employee/usecase"
 	"github.com/mickamy/employee-management/internal/storage/tx"
 	"github.com/mickamy/employee-management/internal/test/tinfra"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,5 +34,5 @@ func TestGetEmployee_Do(t *testing.T) {
 
 	// assert
 	require.NoError(t, err)
-	require.Equal(t, employee, out.Employee)
+	assert.Equal(t, employee, out.Employee)
 }

@@ -33,7 +33,7 @@ func TestEmployee_Find(t *testing.T) {
 
 	// assert
 	require.NoError(t, err)
-	require.Equal(t, employee, m)
+	assert.Equal(t, employee, m)
 }
 
 func TestEmployee_Find_NotFound(t *testing.T) {
@@ -73,7 +73,7 @@ func TestEmployee_List(t *testing.T) {
 	// assert
 	require.NoError(t, err)
 	require.Len(t, ms, 1)
-	require.Equal(t, employee, ms[0])
+	assert.Equal(t, employee, ms[0])
 }
 
 func TestEmployee_CreateAndCreateHire(t *testing.T) {
@@ -97,5 +97,5 @@ func TestEmployee_CreateAndCreateHire(t *testing.T) {
 	require.NoError(t, err)
 	found, err := sut.Find(t.Context(), employee.ID)
 	require.NoError(t, err)
-	require.Equal(t, employee, found)
+	assert.Equal(t, employee, found)
 }

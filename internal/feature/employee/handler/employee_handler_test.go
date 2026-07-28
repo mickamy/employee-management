@@ -31,8 +31,6 @@ func TestHandler_HireAndGet(t *testing.T) {
 	hired := fixture.Employee(func(m *model.Employee) {
 		m.HiredOn = m.HiredOn.Truncate(24 * time.Hour)
 	})
-
-	// act
 	ct := contest.NewWith(t,
 		contest.Bind(employeev1connect.NewEmployeeServiceHandler)(handler.NewFeature(infra)),
 		connect.WithInterceptors(interceptor.NewInterceptors()...),
@@ -53,6 +51,8 @@ func TestHandler_HireAndGet(t *testing.T) {
 	require.Equal(t, hired.Name, hireOut.GetEmployee().GetName())
 	require.Equal(t, hired.Email, hireOut.GetEmployee().GetEmail())
 	require.Equal(t, hired.HiredOn, converters.ToTime(hireOut.GetEmployee().GetHiredOn()))
+
+	// act
 	var getOut employeev1.GetEmployeeResponse
 	ct.
 		Procedure(employeev1connect.EmployeeServiceGetEmployeeProcedure).
@@ -80,8 +80,7 @@ func TestHandler_GetNotFound(t *testing.T) {
 	ct := contest.NewWith(t,
 		contest.Bind(employeev1connect.NewEmployeeServiceHandler)(handler.NewFeature(infra)),
 		connect.WithInterceptors(interceptor.NewInterceptors()...),
-	)
-	ct = ct.
+	).
 		Procedure(employeev1connect.EmployeeServiceGetEmployeeProcedure).
 		In(&employeev1.GetEmployeeRequest{
 			Id: uuid.New().String(),

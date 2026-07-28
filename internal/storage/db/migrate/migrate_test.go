@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-	"os"
 	"testing"
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/mickamy/employee-management/internal/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -19,11 +19,7 @@ import (
 func TestUp(t *testing.T) {
 	t.Parallel()
 
-	adminURL := os.Getenv("DATABASE_URL")
-	if adminURL == "" {
-		t.Skip("DATABASE_URL is not set")
-	}
-
+	adminURL := config.ParseDatabase().AdminURL
 	admin, err := db.New(t.Context(), adminURL)
 	require.NoError(t, err)
 	t.Cleanup(admin.Close)
@@ -50,7 +46,7 @@ func TestUp(t *testing.T) {
 	require.NoError(t, row.Scan(&tables))
 	require.Equal(t, 2, tables)
 
-	require.NoError(t, migrate.Up(t.Context(), pool), "second run must be a no-op")
+	assert.NoError(t, migrate.Up(t.Context(), pool), "second run must be a no-op")
 }
 
 func replaceDBName(t *testing.T, raw, name string) string {
