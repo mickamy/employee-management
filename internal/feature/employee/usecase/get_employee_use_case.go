@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/mickamy/employee-management/internal/di"
 
 	"github.com/mickamy/employee-management/internal/feature/employee/model"
 	"github.com/mickamy/employee-management/internal/feature/employee/repository"
@@ -20,14 +21,15 @@ type GetEmployeeOutput struct {
 }
 
 type GetEmployee struct {
-	tx                 tx.ReadTransactor   `inject:"arg"`
-	employeeRepository repository.Employee `inject:"arg"`
+	_                  di.Infra            `inject:"embed"`
+	tx                 tx.ReadTransactor   `inject:""`
+	employeeRepository repository.Employee `inject:""`
 }
 
 func (uc GetEmployee) Do(ctx context.Context, input GetEmployeeInput) (GetEmployeeOutput, error) {
 	var employee model.Employee
-	err := uc.tx.WithReadTx(ctx, func(boundTx tx.Tx) error {
-		found, err := uc.employeeRepository.Bind(boundTx).Find(ctx, input.ID)
+	err := uc.tx.WithReadTx(ctx, func(tx tx.Tx) error {
+		found, err := uc.employeeRepository.Bind(tx).Find(ctx, input.ID)
 		if err != nil {
 			return fmt.Errorf("find employee: %w", err)
 		}

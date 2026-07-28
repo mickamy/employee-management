@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/mickamy/employee-management/internal/di"
 
 	"github.com/mickamy/employee-management/internal/storage/tx"
 
@@ -22,14 +23,15 @@ type ListEmployeesOutput struct {
 }
 
 type ListEmployees struct {
-	tx                 tx.ReadTransactor   `inject:"arg"`
-	employeeRepository repository.Employee `inject:"arg"`
+	_                  di.Infra            `inject:"embed"`
+	tx                 tx.ReadTransactor   `inject:""`
+	employeeRepository repository.Employee `inject:""`
 }
 
 func (uc ListEmployees) Do(ctx context.Context, input ListEmployeesInput) (ListEmployeesOutput, error) {
 	var employees []model.Employee
-	if err := uc.tx.WithReadTx(ctx, func(boundTx tx.Tx) error {
-		found, err := uc.employeeRepository.Bind(boundTx).List(ctx, input.AfterID, input.PageSize)
+	if err := uc.tx.WithReadTx(ctx, func(tx tx.Tx) error {
+		found, err := uc.employeeRepository.Bind(tx).List(ctx, input.AfterID, input.PageSize)
 		if err != nil {
 			return fmt.Errorf("list employees: %w", err)
 		}

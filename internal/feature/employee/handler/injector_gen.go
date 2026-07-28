@@ -4,21 +4,14 @@ package handler
 
 import (
 	di "github.com/mickamy/employee-management/internal/di"
-	repository "github.com/mickamy/employee-management/internal/feature/employee/repository"
 	usecase "github.com/mickamy/employee-management/internal/feature/employee/usecase"
-	tx "github.com/mickamy/employee-management/internal/storage/tx"
 )
 
 // NewHandler initializes dependencies and constructs Handler.
 func NewHandler(infra di.Infra) *Handler {
-	writer := infra.Writer
-	transactor := tx.NewTransactor(writer)
-	reader := infra.Reader
-	employee := repository.NewEmployee(reader)
-	hire := usecase.NewHireEmployee(transactor, employee)
-	readTransactor := tx.NewReadTransactor(reader)
-	get := usecase.NewGetEmployee(readTransactor, employee)
-	list := usecase.NewListEmployees(readTransactor, employee)
+	hire := usecase.NewHireEmployee(infra)
+	get := usecase.NewGetEmployee(infra)
+	list := usecase.NewListEmployees(infra)
 
 	return &Handler{
 		hire: hire,

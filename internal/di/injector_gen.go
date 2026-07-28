@@ -27,9 +27,13 @@ func NewInfra(context2 context.Context, config2 *Config) (*Infra, error) {
 	if err != nil {
 		return nil, err
 	}
+	transactor := provideTransactor(writer)
+	readTransactor := provideReadTransactor(reader)
 
 	return &Infra{
-		Writer: writer,
-		Reader: reader,
+		Writer:         writer,
+		Reader:         reader,
+		Transactor:     transactor,
+		ReadTransactor: readTransactor,
 	}, nil
 }

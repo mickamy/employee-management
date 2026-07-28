@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/mickamy/employee-management/internal/di"
 
 	"github.com/mickamy/employee-management/internal/feature/employee/model"
 	"github.com/mickamy/employee-management/internal/feature/employee/repository"
@@ -25,8 +26,9 @@ type HireEmployeeOutput struct {
 }
 
 type HireEmployee struct {
-	tx                 tx.Transactor       `inject:"arg"`
-	employeeRepository repository.Employee `inject:"arg"`
+	_                  di.Infra            `inject:"embed"`
+	tx                 tx.Transactor       `inject:""`
+	employeeRepository repository.Employee `inject:""`
 }
 
 func (uc HireEmployee) Do(ctx context.Context, input HireEmployeeInput) (HireEmployeeOutput, error) {
@@ -53,11 +55,11 @@ func (uc HireEmployee) Do(ctx context.Context, input HireEmployeeInput) (HireEmp
 	}
 
 	if err = uc.tx.WithTx(ctx, func(tx tx.Tx) error {
-		etx := uc.employeeRepository.Bind(tx)
-		if err := etx.Create(ctx, e); err != nil {
+		employeeRepository := uc.employeeRepository.Bind(tx)
+		if err := employeeRepository.Create(ctx, e); err != nil {
 			return fmt.Errorf("create employee: %w", err)
 		}
-		if err := etx.CreateHire(ctx, hire); err != nil {
+		if err := employeeRepository.CreateHire(ctx, hire); err != nil {
 			return fmt.Errorf("create hire event: %w", err)
 		}
 		return nil

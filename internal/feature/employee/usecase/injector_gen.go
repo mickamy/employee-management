@@ -3,30 +3,42 @@
 package usecase
 
 import (
+	di "github.com/mickamy/employee-management/internal/di"
 	repository "github.com/mickamy/employee-management/internal/feature/employee/repository"
-	tx "github.com/mickamy/employee-management/internal/storage/tx"
 )
 
 // NewGetEmployee initializes dependencies and constructs GetEmployee.
-func NewGetEmployee(readTransactor tx.ReadTransactor, employee repository.Employee) *GetEmployee {
+func NewGetEmployee(infra di.Infra) *GetEmployee {
+	tx := infra.ReadTransactor
+	reader := infra.Reader
+	employeeRepository := repository.NewEmployee(reader)
+
 	return &GetEmployee{
-		tx:                 readTransactor,
-		employeeRepository: employee,
+		tx:                 tx,
+		employeeRepository: employeeRepository,
 	}
 }
 
 // NewHireEmployee initializes dependencies and constructs HireEmployee.
-func NewHireEmployee(transactor tx.Transactor, employee repository.Employee) *HireEmployee {
+func NewHireEmployee(infra di.Infra) *HireEmployee {
+	tx := infra.Transactor
+	reader := infra.Reader
+	employeeRepository := repository.NewEmployee(reader)
+
 	return &HireEmployee{
-		tx:                 transactor,
-		employeeRepository: employee,
+		tx:                 tx,
+		employeeRepository: employeeRepository,
 	}
 }
 
 // NewListEmployees initializes dependencies and constructs ListEmployees.
-func NewListEmployees(readTransactor tx.ReadTransactor, employee repository.Employee) *ListEmployees {
+func NewListEmployees(infra di.Infra) *ListEmployees {
+	tx := infra.ReadTransactor
+	reader := infra.Reader
+	employeeRepository := repository.NewEmployee(reader)
+
 	return &ListEmployees{
-		tx:                 readTransactor,
-		employeeRepository: employee,
+		tx:                 tx,
+		employeeRepository: employeeRepository,
 	}
 }
