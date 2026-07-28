@@ -25,7 +25,7 @@ func NewInfra(context2 context.Context, config2 *Config) (*Infra, error) {
 	if err != nil {
 		return nil, err
 	}
-	reader, err := provideReader(context2, database)
+	reader, err := provideReader(context2, database, writer)
 	if err != nil {
 		return nil, err
 	}

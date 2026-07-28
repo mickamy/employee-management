@@ -32,9 +32,10 @@ func provideWriter(ctx context.Context, cfg config.Database) (db.Writer, error) 
 	return writer, nil
 }
 
-func provideReader(ctx context.Context, cfg config.Database) (db.Reader, error) {
+func provideReader(ctx context.Context, cfg config.Database, writer db.Writer) (db.Reader, error) {
 	reader, err := db.NewReader(ctx, cfg.ReaderURL)
 	if err != nil {
+		writer.Close()
 		return db.Reader{}, fmt.Errorf("new reader: %w", err)
 	}
 	return reader, nil
