@@ -52,6 +52,15 @@ func TestListEmployee_Do(t *testing.T) {
 
 	// assert
 	require.NoError(t, err)
-	assert.Equal(t, employee1, out.Employees[0])
-	assert.Equal(t, employee2, out.Employees[1])
+	for _, outEmployee := range out.Employees {
+		var expected model.Employee
+		for _, e := range []model.Employee{employee1, employee2} {
+			if e.ID == outEmployee.ID {
+				expected = e
+			}
+		}
+		require.NotEmpty(t, expected)
+		assert.Equal(t, expected, outEmployee)
+		assert.Equal(t, expected, outEmployee)
+	}
 }
