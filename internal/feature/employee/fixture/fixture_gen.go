@@ -4,12 +4,14 @@ package fixture
 
 import (
 	"github.com/brianvoe/gofakeit/v7"
+	"github.com/google/uuid"
 
 	"github.com/mickamy/employee-management/internal/feature/employee/model"
 )
 
 func Employee(setters ...func(m *model.Employee)) model.Employee {
 	m := model.Employee{
+		ID:      uuid.MustParse(gofakeit.UUID()),
 		Code:    gofakeit.Word(),
 		Name:    gofakeit.Name(),
 		Email:   gofakeit.Email(),
@@ -23,7 +25,9 @@ func Employee(setters ...func(m *model.Employee)) model.Employee {
 
 func EmployeeHire(setters ...func(m *model.EmployeeHire)) model.EmployeeHire {
 	m := model.EmployeeHire{
-		HiredOn: gofakeit.Date(),
+		ID:         uuid.MustParse(gofakeit.UUID()),
+		EmployeeID: uuid.MustParse(gofakeit.UUID()),
+		HiredOn:    gofakeit.Date(),
 	}
 	for _, s := range setters {
 		s(&m)

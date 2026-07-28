@@ -57,8 +57,8 @@ github.com/mfridman/interpolate v0.0.2 h1:pnuTK7MQIxxFz1Gr+rjSIx9u7qVjf5VOoM/u6B
 github.com/mfridman/interpolate v0.0.2/go.mod h1:p+7uk6oE07mpE/Ik1b8EckO0O4ZXiGAfshKBWLUM9Xg=
 github.com/mickamy/mapgen v0.0.1 h1:wlt+cmMN+EbDTlVa/WjO9cFFgb4ONJ/nhR3OYR+yUVs=
 github.com/mickamy/mapgen v0.0.1/go.mod h1:Q7hoenHCnr9dHoFL2nE+jdTyex43H5NH2w0GituGlOU=
-github.com/mickamy/standin v0.0.1 h1:YnXMClfqvmSQIf1gysvMYwL6F6Cd5BeO4rxQrR739BI=
-github.com/mickamy/standin v0.0.1/go.mod h1:XhijQZl3lEQnhv4/E9BmtTv/AYjfBODwj7VoLUL5vg4=
+github.com/mickamy/standin v0.0.2 h1:ip4x62GCdw/WfrGZq8twaWkGuvs6mIunPFcHl5XcCrk=
+github.com/mickamy/standin v0.0.2/go.mod h1:XhijQZl3lEQnhv4/E9BmtTv/AYjfBODwj7VoLUL5vg4=
 github.com/ncruces/go-strftime v1.0.0 h1:HMFp8mLCTPp341M/ZnA4qaf7ZlsbTc+miZjCLOFAw7w=
 github.com/ncruces/go-strftime v1.0.0/go.mod h1:Fwc5htZGVVkseilnfgOVb9mKy6w1naJmn9CehxcKcls=
 github.com/peterldowns/pgtestdb v0.1.1 h1:+hBCD1DcbKeg5Sfg0G+5WNIy/Cm0ORgwMkF4ygihrmU=
