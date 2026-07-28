@@ -34,7 +34,7 @@ func (uc ListEmployees) Do(ctx context.Context, input ListEmployeesInput) (ListE
 	if err := uc.tx.WithReadTx(ctx, func(tx tx.Tx) error {
 		found, err := uc.employeeRepository.Bind(tx).List(ctx, input.AfterID, input.PageSize)
 		if err != nil {
-			return fmt.Errorf("list employees: %w", err)
+			return fmt.Errorf("fetch employees: %w", err)
 		}
 		employees = found
 		return nil
