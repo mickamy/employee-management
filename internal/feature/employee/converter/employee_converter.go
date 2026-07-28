@@ -5,7 +5,7 @@ import (
 	"github.com/mickamy/employee-management/internal/feature/employee/model"
 )
 
-//go:generate go tool -modfile=../../../../tools/go.mod automapper -types=model.Employee:employeev1.Employee -converter-pkg=../../../lib/converters -output=.
+//go:generate go tool mapgen -types=model.Employee:*employeev1.Employee -converter-pkg=../../../lib/converters -output=.
 
 var (
 	_ model.Employee

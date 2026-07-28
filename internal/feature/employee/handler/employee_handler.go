@@ -43,7 +43,7 @@ func (h *Handler) HireEmployee(
 	}
 
 	return connect.NewResponse(&employeev1.HireEmployeeResponse{
-		Employee: converter.ToV1EmployeePtr(&out.Employee),
+		Employee: converter.EmployeeToEmployeev1(out.Employee),
 	}), nil
 }
 
@@ -62,7 +62,7 @@ func (h *Handler) GetEmployee(
 	}
 
 	return connect.NewResponse(&employeev1.GetEmployeeResponse{
-		Employee: converter.ToV1EmployeePtr(&out.Employee),
+		Employee: converter.EmployeeToEmployeev1(out.Employee),
 	}), nil
 }
 
@@ -94,7 +94,7 @@ func (h *Handler) ListEmployees(
 
 	items := make([]*employeev1.Employee, len(out.Employees))
 	for i := range out.Employees {
-		items[i] = converter.ToV1EmployeePtr(&out.Employees[i])
+		items[i] = converter.EmployeeToEmployeev1(out.Employees[i])
 	}
 
 	nextPageToken := ""

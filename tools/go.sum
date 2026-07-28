@@ -154,8 +154,6 @@ github.com/mfridman/interpolate v0.0.2 h1:pnuTK7MQIxxFz1Gr+rjSIx9u7qVjf5VOoM/u6B
 github.com/mfridman/interpolate v0.0.2/go.mod h1:p+7uk6oE07mpE/Ik1b8EckO0O4ZXiGAfshKBWLUM9Xg=
 github.com/mfridman/xflag v0.1.0 h1:TWZrZwG1QklFX5S4j1vxfF1sZbZeZSGofMwPMLAF29M=
 github.com/mfridman/xflag v0.1.0/go.mod h1:/483ywM5ZO5SuMVjrIGquYNE5CzLrj5Ux/LxWWnjRaE=
-github.com/mickamy/automapper v0.1.0 h1:LWteL63WcTjXD32MapwoRls/r6bytBukDvplfXj+OZY=
-github.com/mickamy/automapper v0.1.0/go.mod h1:S/sszQhV0Fhx5IF0xC29D2UiJHA05Ab9/niy3eFSwWQ=
 github.com/mickamy/injector v0.2.7 h1:9I7dX6E4KBmmmdlG6FxdPHl/tPYjQmIr6O0m/fyxcVA=
 github.com/mickamy/injector v0.2.7/go.mod h1:KguDAfVhwn1v2jwt4pqX75r5wduMjBN+ezO+4Og7jME=
 github.com/microsoft/go-mssqldb v1.10.0 h1:pHEt+Qz6YFPWqREq10mqSE524QQo+/QremwTCQht7TY=

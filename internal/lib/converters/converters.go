@@ -6,15 +6,15 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/mickamy/automapper"
+	"github.com/mickamy/mapgen/runtime/mapper"
 	"google.golang.org/genproto/googleapis/type/date"
 )
 
 func init() {
-	automapper.RegisterTo[time.Time, *date.Date](ToDate)
-	automapper.RegisterTo[uuid.UUID, string](UUIDToString)
-	automapper.RegisterFrom[*date.Date, time.Time](ToTime)
-	automapper.RegisterFromE[string, uuid.UUID](uuid.Parse)
+	mapper.Register[time.Time, *date.Date](ToDate)
+	mapper.Register[uuid.UUID, string](UUIDToString)
+	mapper.Register[*date.Date, time.Time](ToTime)
+	mapper.RegisterE[string, uuid.UUID](uuid.Parse)
 }
 
 // UUIDToString renders a UUID in its canonical string form.
