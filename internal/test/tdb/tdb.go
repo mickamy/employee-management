@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/url"
+	"os"
 	"strings"
 	"testing"
 
@@ -33,6 +34,7 @@ type DB struct {
 func New(t *testing.T) DB {
 	t.Helper()
 
+	requireDatabaseEnv(t)
 	dbCfg := config.ParseDatabase()
 
 	cfg := pgtestdb.Custom(t, configFromURL(t, dbCfg.AdminURL), migrator{})
@@ -46,6 +48,23 @@ func New(t *testing.T) DB {
 	t.Cleanup(reader.Close)
 
 	return DB{Writer: writer, Reader: reader, Transactor: tx.NewTransactor(writer)}
+}
+
+func requireDatabaseEnv(t *testing.T) {
+	t.Helper()
+
+	var missing []string
+	for _, key := range []string{"DATABASE_URL", "DATABASE_WRITER_URL", "DATABASE_READER_URL"} {
+		if os.Getenv(key) == "" {
+			missing = append(missing, key)
+		}
+	}
+	if len(missing) > 0 {
+		t.Fatalf(
+			"missing env vars %v: create .env via `envsubst < .env.example > .env` and run tests through make",
+			missing,
+		)
+	}
 }
 
 type migrator struct{}
