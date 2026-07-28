@@ -38,7 +38,7 @@ func run() error {
 		_ = infra.Close()
 	}()
 
-	employee := handler.NewHandler(*infra)
+	employee := handler.NewEmployee(*infra)
 
 	port := strings.TrimPrefix(cmp.Or(os.Getenv("PORT"), "8080"), ":")
 	srv := server.New(":"+port, employee)

@@ -7,13 +7,13 @@ import (
 	usecase "github.com/mickamy/employee-management/internal/feature/employee/usecase"
 )
 
-// NewFeature initializes dependencies and constructs Feature.
-func NewFeature(infra di.Infra) *Feature {
+// NewEmployee initializes dependencies and constructs Employee.
+func NewEmployee(infra di.Infra) *Employee {
 	hire := usecase.NewHireEmployee(infra)
 	get := usecase.NewGetEmployee(infra)
 	list := usecase.NewListEmployees(infra)
 
-	return &Feature{
+	return &Employee{
 		hire: hire,
 		get:  get,
 		list: list,

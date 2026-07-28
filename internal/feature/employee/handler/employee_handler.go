@@ -19,16 +19,16 @@ import (
 
 const defaultPageSize = 50
 
-type Feature struct {
+type Employee struct {
 	_    di.Infra               `inject:"embed"`
 	hire *usecase.HireEmployee  `inject:""`
 	get  *usecase.GetEmployee   `inject:""`
 	list *usecase.ListEmployees `inject:""`
 }
 
-var _ employeev1connect.EmployeeServiceHandler = (*Feature)(nil)
+var _ employeev1connect.EmployeeServiceHandler = (*Employee)(nil)
 
-func (h *Feature) HireEmployee(
+func (h *Employee) HireEmployee(
 	ctx context.Context,
 	req *connect.Request[employeev1.HireEmployeeRequest],
 ) (*connect.Response[employeev1.HireEmployeeResponse], error) {
@@ -47,7 +47,7 @@ func (h *Feature) HireEmployee(
 	}), nil
 }
 
-func (h *Feature) GetEmployee(
+func (h *Employee) GetEmployee(
 	ctx context.Context,
 	req *connect.Request[employeev1.GetEmployeeRequest],
 ) (*connect.Response[employeev1.GetEmployeeResponse], error) {
@@ -66,7 +66,7 @@ func (h *Feature) GetEmployee(
 	}), nil
 }
 
-func (h *Feature) ListEmployees(
+func (h *Employee) ListEmployees(
 	ctx context.Context,
 	req *connect.Request[employeev1.ListEmployeesRequest],
 ) (*connect.Response[employeev1.ListEmployeesResponse], error) {
