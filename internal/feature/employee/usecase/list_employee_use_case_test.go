@@ -52,6 +52,7 @@ func TestListEmployee_Do(t *testing.T) {
 
 	// assert
 	require.NoError(t, err)
+	require.Len(t, out.Employees, 2)
 	for _, outEmployee := range out.Employees {
 		var expected model.Employee
 		for _, e := range []model.Employee{employee1, employee2} {
