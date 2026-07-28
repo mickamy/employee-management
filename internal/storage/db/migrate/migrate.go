@@ -25,23 +25,23 @@ var migrations embed.FS
 
 // Up applies all pending migrations through the given admin pool.
 func Up(ctx context.Context, pool *pgxpool.Pool) (err error) {
-	sqldb := stdlib.OpenDBFromPool(pool)
+	sqlDB := stdlib.OpenDBFromPool(pool)
 	defer func() {
-		err = errors.Join(err, sqldb.Close())
+		err = errors.Join(err, sqlDB.Close())
 	}()
 
-	err = UpDB(ctx, sqldb)
+	err = UpDB(ctx, sqlDB)
 	return err
 }
 
 // UpDB applies all pending migrations through the given database handle,
 // which stays open and owned by the caller.
-func UpDB(ctx context.Context, sqldb *sql.DB) (err error) {
+func UpDB(ctx context.Context, sqlDB *sql.DB) (err error) {
 	fsys, err := fs.Sub(migrations, "sql")
 	if err != nil {
 		return fmt.Errorf("sub filesystem: %w", err)
 	}
-	provider, err := goose.NewProvider(database.DialectPostgres, sqldb, fsys)
+	provider, err := goose.NewProvider(database.DialectPostgres, sqlDB, fsys)
 	if err != nil {
 		return fmt.Errorf("create goose provider: %w", err)
 	}

@@ -60,8 +60,8 @@ func (migrator) Hash() (string, error) {
 	return hash, nil
 }
 
-func (migrator) Migrate(ctx context.Context, sqldb *sql.DB, _ pgtestdb.Config) error {
-	if err := migrate.UpDB(ctx, sqldb); err != nil {
+func (migrator) Migrate(ctx context.Context, sqlDB *sql.DB, _ pgtestdb.Config) error {
+	if err := migrate.UpDB(ctx, sqlDB); err != nil {
 		return fmt.Errorf("apply migrations: %w", err)
 	}
 	return nil
