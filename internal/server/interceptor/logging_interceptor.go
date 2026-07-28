@@ -56,7 +56,7 @@ func Logging(cfg config.App) connect.UnaryInterceptorFunc {
 				fields := []any{"error", err}
 				fields = append(fields, reqFields...)
 				logger.Error(ctx, "internal error", fields...)
-				return res, internalError
+				return res, connect.NewError(connect.CodeInternal, internalError)
 			}
 
 			// log the response details
