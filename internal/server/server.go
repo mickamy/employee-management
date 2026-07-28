@@ -6,29 +6,30 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	"connectrpc.com/validate"
-
 	"github.com/mickamy/employee-management/gen/assignment/v1/assignmentv1connect"
 	"github.com/mickamy/employee-management/gen/employee/v1/employeev1connect"
 	"github.com/mickamy/employee-management/gen/organization/v1/organizationv1connect"
+	"github.com/mickamy/employee-management/internal/server/interceptor"
 )
 
 // Handler returns the HTTP handler serving every Connect service. Services
 // not yet implemented keep their generated Unimplemented handlers.
 // Integration tests can mount it on an httptest.Server instead of running the binary.
 func Handler(employee employeev1connect.EmployeeServiceHandler) http.Handler {
-	opts := connect.WithInterceptors(validate.NewInterceptor())
+	opts := []connect.HandlerOption{
+		interceptor.Option(),
+	}
 
 	mux := http.NewServeMux()
-	mux.Handle(employeev1connect.NewEmployeeServiceHandler(employee, opts))
+	mux.Handle(employeev1connect.NewEmployeeServiceHandler(employee, opts...))
 	mux.Handle(assignmentv1connect.NewAssignmentCommandServiceHandler(
-		assignmentv1connect.UnimplementedAssignmentCommandServiceHandler{}, opts,
+		assignmentv1connect.UnimplementedAssignmentCommandServiceHandler{}, opts...,
 	))
 	mux.Handle(assignmentv1connect.NewAssignmentQueryServiceHandler(
-		assignmentv1connect.UnimplementedAssignmentQueryServiceHandler{}, opts,
+		assignmentv1connect.UnimplementedAssignmentQueryServiceHandler{}, opts...,
 	))
 	mux.Handle(organizationv1connect.NewOrganizationServiceHandler(
-		organizationv1connect.UnimplementedOrganizationServiceHandler{}, opts,
+		organizationv1connect.UnimplementedOrganizationServiceHandler{}, opts...,
 	))
 	return mux
 }
