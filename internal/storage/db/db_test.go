@@ -4,9 +4,10 @@ import (
 	"testing"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/mickamy/employee-management/internal/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/mickamy/employee-management/internal/config"
 
 	"github.com/mickamy/employee-management/internal/storage/db"
 )
@@ -21,7 +22,7 @@ func TestNew(t *testing.T) {
 	pool, err := db.New(t.Context(), url)
 
 	// assert
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	pool.Close()
 }
 
