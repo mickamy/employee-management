@@ -19,6 +19,7 @@ import (
 	"google.golang.org/genproto/googleapis/type/date"
 
 	employeev1 "github.com/mickamy/employee-management/gen/employee/v1"
+	"github.com/mickamy/employee-management/internal/di"
 	"github.com/mickamy/employee-management/internal/feature/employee/handler"
 	"github.com/mickamy/employee-management/internal/test/tinfra"
 )
@@ -32,8 +33,8 @@ func TestHandler_HireAndGet(t *testing.T) {
 		m.HiredOn = m.HiredOn.Truncate(24 * time.Hour)
 	})
 	ct := contest.NewWith(t,
-		contest.Bind(employeev1connect.NewEmployeeServiceHandler)(handler.NewFeature(infra)),
-		connect.WithInterceptors(interceptor.NewInterceptors()...),
+		contest.Bind(employeev1connect.NewEmployeeServiceHandler)(handler.NewEmployee(infra)),
+		connect.WithInterceptors(interceptor.NewInterceptors(*di.NewConfig())...),
 	)
 	var hireOut employeev1.HireEmployeeResponse
 	ct.
@@ -78,8 +79,8 @@ func TestHandler_GetNotFound(t *testing.T) {
 
 	// act
 	ct := contest.NewWith(t,
-		contest.Bind(employeev1connect.NewEmployeeServiceHandler)(handler.NewFeature(infra)),
-		connect.WithInterceptors(interceptor.NewInterceptors()...),
+		contest.Bind(employeev1connect.NewEmployeeServiceHandler)(handler.NewEmployee(infra)),
+		connect.WithInterceptors(interceptor.NewInterceptors(*di.NewConfig())...),
 	).
 		Procedure(employeev1connect.EmployeeServiceGetEmployeeProcedure).
 		In(&employeev1.GetEmployeeRequest{
@@ -98,8 +99,8 @@ func TestHandler_ListPagination(t *testing.T) {
 	// arrange
 	infra := tinfra.New(t)
 	ct := contest.NewWith(t,
-		contest.Bind(employeev1connect.NewEmployeeServiceHandler)(handler.NewFeature(infra)),
-		connect.WithInterceptors(interceptor.NewInterceptors()...),
+		contest.Bind(employeev1connect.NewEmployeeServiceHandler)(handler.NewEmployee(infra)),
+		connect.WithInterceptors(interceptor.NewInterceptors(*di.NewConfig())...),
 	)
 	for i := range 3 {
 		ct.

@@ -24,16 +24,14 @@ DB_NAME = employee_management
 		gen-sqlc \
 		new-migration \
 
+.env:
+	envsubst < .env.example > $@
+
 build:
 	@mkdir -p $(BUILD_DIR)
 	go build -o $(BUILD_DIR)/server ./cmd/server
 
-# No prerequisites: only runs when .env is absent, never overwrites an edited one.
-.env:
-	envsubst < .env.example > $@
-
 clean:
-	@echo "Cleaning up..."
 	rm -rf $(BUILD_DIR)
 
 test:
