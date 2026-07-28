@@ -22,11 +22,6 @@ func New(t *testing.T) di.Infra {
 		Transactor:     tx.NewTransactor(d.Writer),
 		ReadTransactor: tx.NewReadTransactor(d.Reader),
 	}
-	t.Cleanup(func() {
-		if err := i.Close(); err != nil {
-			t.Fatal(err)
-		}
-	})
 
 	return i
 }
