@@ -2,12 +2,10 @@ package repository_test
 
 import (
 	"testing"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/mickamy/employee-management/internal/errors/aerrors"
 	"github.com/mickamy/employee-management/internal/feature/employee/fixture"
-	"github.com/mickamy/employee-management/internal/feature/employee/model"
 	"github.com/mickamy/employee-management/internal/feature/employee/repository"
 	"github.com/mickamy/employee-management/internal/storage/tx"
 	"github.com/mickamy/employee-management/internal/test/tdb"
@@ -21,7 +19,7 @@ func TestEmployee_Find(t *testing.T) {
 	// arrange
 	db := tdb.New(t)
 	sut := repository.NewEmployee(db.Reader)
-	employee, hire := buildEmployee()
+	employee, hire := fixture.EmployeeAndHire()
 	require.NoError(t, tx.NewTransactor(db.Writer).WithTx(t.Context(), func(tx tx.Tx) error {
 		bound := sut.Bind(tx)
 		if err := bound.Create(t.Context(), employee); err != nil {
@@ -60,7 +58,7 @@ func TestEmployee_List(t *testing.T) {
 	// arrange
 	db := tdb.New(t)
 	sut := repository.NewEmployee(db.Reader)
-	employee, hire := buildEmployee()
+	employee, hire := fixture.EmployeeAndHire()
 	require.NoError(t, tx.NewTransactor(db.Writer).WithTx(t.Context(), func(tx tx.Tx) error {
 		bound := sut.Bind(tx)
 		if err := bound.Create(t.Context(), employee); err != nil {
@@ -84,7 +82,7 @@ func TestEmployee_CreateAndCreateHire(t *testing.T) {
 	// arrange
 	db := tdb.New(t)
 	sut := repository.NewEmployee(db.Reader)
-	employee, hire := buildEmployee()
+	employee, hire := fixture.EmployeeAndHire()
 
 	// act
 	err := tx.NewTransactor(db.Writer).WithTx(t.Context(), func(tx tx.Tx) error {
@@ -100,15 +98,4 @@ func TestEmployee_CreateAndCreateHire(t *testing.T) {
 	found, err := sut.Find(t.Context(), employee.ID)
 	require.NoError(t, err)
 	require.Equal(t, employee, found)
-}
-
-func buildEmployee() (model.Employee, model.EmployeeHire) {
-	employee := fixture.Employee(func(m *model.Employee) {
-		m.HiredOn = m.HiredOn.Truncate(24 * time.Hour)
-	})
-	hire := fixture.EmployeeHire(func(m *model.EmployeeHire) {
-		m.EmployeeID = employee.ID
-		m.HiredOn = employee.HiredOn
-	})
-	return employee, hire
 }
