@@ -6,24 +6,10 @@ package queries
 
 import (
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Department struct {
 	ID   uuid.UUID
 	Code string
 	Name string
-}
-
-type Employee struct {
-	ID    uuid.UUID
-	Code  string
-	Name  string
-	Email string
-}
-
-type EmployeeHire struct {
-	ID         uuid.UUID
-	EmployeeID uuid.UUID
-	HiredOn    pgtype.Date
 }
