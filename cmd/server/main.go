@@ -45,7 +45,7 @@ func run(cfg di.Config) error {
 	employee := handler.NewEmployee(*infra)
 
 	port := strings.TrimPrefix(cmp.Or(os.Getenv("PORT"), "8080"), ":")
-	srv := server.New(":"+port, employee)
+	srv := server.New(":"+port, cfg, employee)
 
 	var lc net.ListenConfig
 	ln, err := lc.Listen(ctx, "tcp", srv.Addr)
