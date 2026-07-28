@@ -49,13 +49,6 @@ func internalHandle(ctx context.Context, level slog.Level, msg string, args ...a
 	source = strings.TrimPrefix(source, moduleRoot+"/")
 	args = append(args, slog.String("source", source))
 
-	handle(ctx, level, msg, source, args...)
-}
-
-func handle(ctx context.Context, level slog.Level, msg, source string, args ...any) {
-	source = strings.TrimPrefix(source, moduleRoot+"/")
-	args = append(args, slog.String("source", source))
-
 	slog.Default().Log(ctx, level, msg, args...)
 }
 
