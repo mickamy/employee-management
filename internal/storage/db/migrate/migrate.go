@@ -1,6 +1,6 @@
 // Package migrate applies the embedded SQL migrations programmatically. It
 // exists for tests that need to bring throwaway databases to the current
-// schema; deployments run migrations through the goose CLI (make tdb-migrate),
+// schema; deployments run migrations through the goose CLI (make db-migrate),
 // and the server binary never links this package.
 package migrate
 

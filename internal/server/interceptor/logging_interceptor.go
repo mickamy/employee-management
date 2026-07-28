@@ -2,7 +2,6 @@ package interceptor
 
 import (
 	"context"
-	"errors"
 	"log/slog"
 	"slices"
 
@@ -18,8 +17,6 @@ var sensitiveHeaders = map[string]bool{
 	"Cookie":        true,
 	"Set-Cookie":    true,
 }
-
-var errInternal = errors.New("internal error")
 
 func Logging(cfg config.App) connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
