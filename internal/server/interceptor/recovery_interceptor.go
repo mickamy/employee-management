@@ -5,11 +5,10 @@ import (
 	"runtime"
 
 	"connectrpc.com/connect"
-	"github.com/mickamy/employee-management/internal/config"
 	"github.com/mickamy/employee-management/internal/lib/logger"
 )
 
-func Recovery(cfg config.App) connect.UnaryInterceptorFunc {
+func Recovery() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 
 		return func(

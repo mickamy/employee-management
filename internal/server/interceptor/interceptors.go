@@ -8,7 +8,8 @@ import (
 
 func NewInterceptors(cfg di.Config) []connect.Interceptor {
 	return []connect.Interceptor{
-		Recovery(cfg.App),
+		Recovery(),
+		Logging(cfg.App),
 		validate.NewInterceptor(),
 	}
 }
