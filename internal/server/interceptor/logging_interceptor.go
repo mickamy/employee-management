@@ -3,11 +3,11 @@ package interceptor
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"slices"
 
 	"connectrpc.com/connect"
+
 	"github.com/mickamy/employee-management/internal/config"
 	"github.com/mickamy/employee-management/internal/lib/execution"
 	"github.com/mickamy/employee-management/internal/lib/logger"
@@ -19,7 +19,7 @@ var sensitiveHeaders = map[string]bool{
 	"Set-Cookie":    true,
 }
 
-var internalError = errors.New("internal error")
+var errInternal = errors.New("internal error")
 
 func Logging(cfg config.App) connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
@@ -29,7 +29,8 @@ func Logging(cfg config.App) connect.UnaryInterceptorFunc {
 		) (connect.AnyResponse, error) {
 			execID, err := execution.NewID()
 			if err != nil {
-				return nil, fmt.Errorf("failed to generate execution id: %w", err)
+				logger.Error(ctx, "failed to generate execution ID", "error", err)
+				return nil, connect.NewError(connect.CodeInternal, errInternal)
 			}
 			ctx = execution.Set(ctx, execID)
 
@@ -53,10 +54,11 @@ func Logging(cfg config.App) connect.UnaryInterceptorFunc {
 			res, err := next(ctx, req)
 
 			if connect.CodeOf(err) == connect.CodeInternal {
-				fields := []any{"error", err}
+				fields := make([]any, 0, 2+len(reqFields))
+				fields = append(fields, "error", err)
 				fields = append(fields, reqFields...)
 				logger.Error(ctx, "internal error", fields...)
-				return res, connect.NewError(connect.CodeInternal, internalError)
+				return res, connect.NewError(connect.CodeInternal, errInternal)
 			}
 
 			// log the response details
