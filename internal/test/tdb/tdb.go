@@ -8,46 +8,40 @@ import (
 	"database/sql"
 	"fmt"
 	"net/url"
-	"os"
 	"strings"
 	"testing"
 
-	_ "github.com/jackc/pgx/v5/stdlib" // registers the "pgx" database/sql driver
+	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/mickamy/employee-management/internal/config"
 	"github.com/mickamy/employee-management/internal/storage/tx"
 	"github.com/peterldowns/pgtestdb"
 	"github.com/stretchr/testify/require"
 
-	sdb "github.com/mickamy/employee-management/internal/storage/db"
+	"github.com/mickamy/employee-management/internal/storage/db"
 	"github.com/mickamy/employee-management/internal/storage/db/migrate"
 )
 
 // DB is a set of typed pools connected to a freshly migrated database.
 type DB struct {
-	Writer     sdb.Writer
-	Reader     sdb.Reader
+	Writer     db.Writer
+	Reader     db.Reader
 	Transactor tx.Transactor
 }
 
 // New provisions an isolated database and returns typed pools connected to
-// it. Everything is cleaned up with the test. The test is skipped when the
-// database URLs are not configured.
+// it. Everything is cleaned up with the test.
 func New(t *testing.T) DB {
 	t.Helper()
 
-	adminURL := os.Getenv("DATABASE_URL")
-	writerURL := os.Getenv("DATABASE_WRITER_URL")
-	readerURL := os.Getenv("DATABASE_READER_URL")
-	if adminURL == "" || writerURL == "" || readerURL == "" {
-		t.Skip("DATABASE_URL, DATABASE_WRITER_URL, and DATABASE_READER_URL must be set")
-	}
+	dbCfg := config.ParseDatabase()
 
-	cfg := pgtestdb.Custom(t, configFromURL(t, adminURL), migrator{})
+	cfg := pgtestdb.Custom(t, configFromURL(t, dbCfg.AdminURL), migrator{})
 
-	writer, err := sdb.NewWriter(t.Context(), replaceDBName(t, writerURL, cfg.Database))
+	writer, err := db.NewWriter(t.Context(), replaceDBName(t, dbCfg.WriterURL, cfg.Database))
 	require.NoError(t, err)
 	t.Cleanup(writer.Close)
 
-	reader, err := sdb.NewReader(t.Context(), replaceDBName(t, readerURL, cfg.Database))
+	reader, err := db.NewReader(t.Context(), replaceDBName(t, dbCfg.ReaderURL, cfg.Database))
 	require.NoError(t, err)
 	t.Cleanup(reader.Close)
 
