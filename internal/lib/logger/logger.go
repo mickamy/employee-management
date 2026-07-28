@@ -8,7 +8,10 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/uuid"
+
 	"github.com/mickamy/employee-management/internal/config"
+	"github.com/mickamy/employee-management/internal/lib/execution"
 )
 
 const callerSkipDepth = 2
@@ -48,6 +51,11 @@ func internalHandle(ctx context.Context, level slog.Level, msg string, args ...a
 
 	source = strings.TrimPrefix(source, moduleRoot+"/")
 	args = append(args, slog.String("source", source))
+
+	execID := execution.Get(ctx)
+	if execID != uuid.Nil {
+		args = append(args, slog.String("execution_id", execID.String()))
+	}
 
 	slog.Default().Log(ctx, level, msg, args...)
 }
