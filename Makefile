@@ -1,5 +1,5 @@
 include .env
-export DATABASE_URL DATABASE_WRITER_URL DATABASE_READER_URL
+export ENV MODULE_ROOT DATABASE_URL DATABASE_WRITER_URL DATABASE_READER_URL
 
 BUILD_DIR = bin
 GOOSE = go tool -modfile=tools/go.mod goose -dir internal/storage/db/migrate/sql
@@ -27,6 +27,10 @@ DB_NAME = employee_management
 build:
 	@mkdir -p $(BUILD_DIR)
 	go build -o $(BUILD_DIR)/server ./cmd/server
+
+# No prerequisites: only runs when .env is absent, never overwrites an edited one.
+.env:
+	envsubst < .env.example > $@
 
 clean:
 	@echo "Cleaning up..."
