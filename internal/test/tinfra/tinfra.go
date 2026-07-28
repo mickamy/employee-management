@@ -19,7 +19,7 @@ func New(t *testing.T) di.Infra {
 	i := di.Infra{
 		Writer:         d.Writer,
 		Reader:         d.Reader,
-		Transactor:     tx.NewTransactor(d.Writer),
+		Transactor:     d.Transactor,
 		ReadTransactor: tx.NewReadTransactor(d.Reader),
 	}
 
