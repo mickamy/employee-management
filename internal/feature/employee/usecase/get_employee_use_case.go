@@ -7,10 +7,9 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/mickamy/employee-management/internal/di"
-
 	"github.com/mickamy/employee-management/internal/feature/employee/model"
 	"github.com/mickamy/employee-management/internal/feature/employee/repository"
-	"github.com/mickamy/employee-management/internal/storage/tx"
+	"github.com/mickamy/employee-management/internal/infra/storage/tx"
 )
 
 type GetEmployeeInput struct {

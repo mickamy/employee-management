@@ -11,7 +11,7 @@ import (
 	"github.com/mickamy/employee-management/internal/feature/employee/model"
 	"github.com/mickamy/employee-management/internal/feature/employee/repository"
 	"github.com/mickamy/employee-management/internal/feature/employee/usecase"
-	"github.com/mickamy/employee-management/internal/storage/tx"
+	"github.com/mickamy/employee-management/internal/infra/storage/tx"
 	"github.com/mickamy/employee-management/internal/test/tinfra"
 )
 

@@ -17,10 +17,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/mickamy/employee-management/internal/config"
-	"github.com/mickamy/employee-management/internal/storage/tx"
-
-	"github.com/mickamy/employee-management/internal/storage/db"
-	"github.com/mickamy/employee-management/internal/storage/db/migrate"
+	"github.com/mickamy/employee-management/internal/infra/storage/db"
+	"github.com/mickamy/employee-management/internal/infra/storage/db/migrate"
+	"github.com/mickamy/employee-management/internal/infra/storage/tx"
 )
 
 // DB is a set of typed pools connected to a freshly migrated database.

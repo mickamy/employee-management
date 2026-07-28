@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/mickamy/employee-management/internal/di"
-	"github.com/mickamy/employee-management/internal/storage/tx"
+	"github.com/mickamy/employee-management/internal/infra/storage/tx"
 	"github.com/mickamy/employee-management/internal/test/tdb"
 )
 

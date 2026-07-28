@@ -3,22 +3,3 @@
 //   sqlc v1.31.1
 
 package queries
-
-import (
-	"time"
-
-	"github.com/google/uuid"
-)
-
-type Employee struct {
-	ID    uuid.UUID
-	Code  string
-	Name  string
-	Email string
-}
-
-type EmployeeHire struct {
-	ID         uuid.UUID
-	EmployeeID uuid.UUID
-	HiredOn    time.Time
-}

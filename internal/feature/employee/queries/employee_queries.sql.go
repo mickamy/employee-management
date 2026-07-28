@@ -53,7 +53,7 @@ func (q *Queries) CreateEmployeeHire(ctx context.Context, arg CreateEmployeeHire
 const getEmployee = `-- name: GetEmployee :one
 SELECT e.id, e.code, e.name, e.email, h.hired_on
 FROM employees AS e
-INNER JOIN employee_hires AS h ON h.employee_id = e.id
+         INNER JOIN employee_hires AS h ON h.employee_id = e.id
 WHERE e.id = $1
 `
 
@@ -81,7 +81,7 @@ func (q *Queries) GetEmployee(ctx context.Context, id uuid.UUID) (GetEmployeeRow
 const listEmployees = `-- name: ListEmployees :many
 SELECT e.id, e.code, e.name, e.email, h.hired_on
 FROM employees AS e
-INNER JOIN employee_hires AS h ON h.employee_id = e.id
+         INNER JOIN employee_hires AS h ON h.employee_id = e.id
 WHERE e.id > $1
 ORDER BY e.id
 LIMIT $2

@@ -1,13 +1,28 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    schema: "internal/storage/db/migrate/sql"
+    schema: "internal/infra/storage/db/migrate/sql"
     queries: "internal/feature/employee/queries/employee_queries.sql"
     gen:
       go:
         package: "queries"
         out: "internal/feature/employee/queries"
         sql_package: "pgx/v5"
+        omit_unused_structs: true
+        overrides:
+          - db_type: "uuid"
+            go_type: "github.com/google/uuid.UUID"
+          - db_type: "date"
+            go_type: "time.Time"
+  - engine: "postgresql"
+    schema: "internal/infra/storage/db/migrate/sql"
+    queries: "internal/feature/organization/queries/department_queries.sql"
+    gen:
+      go:
+        package: "queries"
+        out: "internal/feature/organization/queries"
+        sql_package: "pgx/v5"
+        omit_unused_structs: true
         overrides:
           - db_type: "uuid"
             go_type: "github.com/google/uuid.UUID"

@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/mickamy/employee-management/internal/di"
-	"github.com/mickamy/employee-management/internal/feature/employee/handler"
 	"github.com/mickamy/employee-management/internal/lib/logger"
 	"github.com/mickamy/employee-management/internal/server"
 )
@@ -42,10 +41,10 @@ func run(cfg di.Config) error {
 		_ = infra.Close()
 	}()
 
-	employee := handler.NewEmployee(*infra)
+	handlers := server.NewHandlers(*infra)
 
 	port := strings.TrimPrefix(cmp.Or(os.Getenv("PORT"), "8080"), ":")
-	srv := server.New(":"+port, cfg, employee)
+	srv := server.New(":"+port, cfg, *handlers)
 
 	var lc net.ListenConfig
 	ln, err := lc.Listen(ctx, "tcp", srv.Addr)
