@@ -12,6 +12,7 @@ func NewInterceptors(cfg di.Config) []connect.Interceptor {
 		Recovery(),
 		Logging(cfg.App),
 		validate.NewInterceptor(),
+		Clock(),
 	}
 }
 
