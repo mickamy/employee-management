@@ -33,8 +33,7 @@ func init() {
 
 func Struct(ctx context.Context, s any) error {
 	if err := validator.StructCtx(ctx, s); err != nil {
-		errs := lib.ValidationErrors{}
-		if errors.As(err, &errs) {
+		if errs, ok := errors.AsType[lib.ValidationErrors](err); ok {
 			return mapValidationErrors(ctx, errs)
 		}
 		panic(fmt.Errorf("unknown validation error: %w", err))
