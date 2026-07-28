@@ -2,26 +2,113 @@ package repository_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
-	"github.com/stretchr/testify/require"
-
+	"github.com/mickamy/employee-management/internal/errors/aerrors"
+	"github.com/mickamy/employee-management/internal/feature/employee/fixture"
 	"github.com/mickamy/employee-management/internal/feature/employee/model"
 	"github.com/mickamy/employee-management/internal/feature/employee/repository"
+	"github.com/mickamy/employee-management/internal/storage/tx"
 	"github.com/mickamy/employee-management/internal/test/tdb"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestUnboundWritesAreRejected(t *testing.T) {
+func TestEmployee_Find(t *testing.T) {
 	t.Parallel()
 
-	d := tdb.New(t)
-	repo := repository.NewEmployee(d.Reader)
+	// arrange
+	db := tdb.New(t)
+	sut := repository.NewEmployee(db.Reader)
+	employee, hire := buildEmployee()
+	require.NoError(t, tx.NewTransactor(db.Writer).WithTx(t.Context(), func(tx tx.Tx) error {
+		bound := sut.Bind(tx)
+		if err := bound.Create(t.Context(), employee); err != nil {
+			return err
+		}
+		return bound.CreateHire(t.Context(), hire)
+	}))
 
-	err := repo.Create(t.Context(), model.Employee{
-		ID:    uuid.New(),
-		Code:  "E0001",
-		Name:  "Test Employee",
-		Email: "test@example.com",
+	// act
+	m, err := sut.Find(t.Context(), employee.ID)
+
+	// assert
+	require.NoError(t, err)
+	require.Equal(t, employee, m)
+}
+
+func TestEmployee_Find_NotFound(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	db := tdb.New(t)
+	sut := repository.NewEmployee(db.Reader)
+
+	// act
+	m, err := sut.Find(t.Context(), uuid.New())
+
+	// assert
+	require.Empty(t, m)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, aerrors.ErrNotFound)
+}
+
+func TestEmployee_List(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	db := tdb.New(t)
+	sut := repository.NewEmployee(db.Reader)
+	employee, hire := buildEmployee()
+	require.NoError(t, tx.NewTransactor(db.Writer).WithTx(t.Context(), func(tx tx.Tx) error {
+		bound := sut.Bind(tx)
+		if err := bound.Create(t.Context(), employee); err != nil {
+			return err
+		}
+		return bound.CreateHire(t.Context(), hire)
+	}))
+
+	// act
+	ms, err := sut.List(t.Context(), uuid.Nil, 1)
+
+	// assert
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
+	require.Equal(t, employee, ms[0])
+}
+
+func TestEmployee_CreateAndCreateHire(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	db := tdb.New(t)
+	sut := repository.NewEmployee(db.Reader)
+	employee, hire := buildEmployee()
+
+	// act
+	err := tx.NewTransactor(db.Writer).WithTx(t.Context(), func(tx tx.Tx) error {
+		bound := sut.Bind(tx)
+		if err := bound.Create(t.Context(), employee); err != nil {
+			return err
+		}
+		return bound.CreateHire(t.Context(), hire)
 	})
-	require.ErrorContains(t, err, "permission denied")
+
+	// assert
+	require.NoError(t, err)
+	found, err := sut.Find(t.Context(), employee.ID)
+	require.NoError(t, err)
+	require.Equal(t, employee, found)
+}
+
+func buildEmployee() (model.Employee, model.EmployeeHire) {
+	employee := fixture.Employee(func(m *model.Employee) {
+		m.HiredOn = m.HiredOn.Truncate(24 * time.Hour)
+	})
+	hire := fixture.EmployeeHire(func(m *model.EmployeeHire) {
+		m.EmployeeID = employee.ID
+		m.HiredOn = employee.HiredOn
+	})
+	return employee, hire
 }

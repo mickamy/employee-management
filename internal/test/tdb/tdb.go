@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	_ "github.com/jackc/pgx/v5/stdlib" // registers the "pgx" database/sql driver
+	"github.com/mickamy/employee-management/internal/storage/tx"
 	"github.com/peterldowns/pgtestdb"
 	"github.com/stretchr/testify/require"
 
@@ -22,8 +23,9 @@ import (
 
 // DB is a set of typed pools connected to a freshly migrated database.
 type DB struct {
-	Writer sdb.Writer
-	Reader sdb.Reader
+	Writer     sdb.Writer
+	Reader     sdb.Reader
+	Transactor tx.Transactor
 }
 
 // New provisions an isolated database and returns typed pools connected to
@@ -49,7 +51,7 @@ func New(t *testing.T) DB {
 	require.NoError(t, err)
 	t.Cleanup(reader.Close)
 
-	return DB{Writer: writer, Reader: reader}
+	return DB{Writer: writer, Reader: reader, Transactor: tx.NewTransactor(writer)}
 }
 
 type migrator struct{}
