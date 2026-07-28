@@ -79,7 +79,9 @@ func (t readTransactor) WithReadTx(ctx context.Context, fn func(tx Tx) error) er
 
 func run(ctx context.Context, pgxTx pgx.Tx, fn func(tx Tx) error) error {
 	defer func() {
-		_ = pgxTx.Rollback(ctx) // no-op if already committed
+		// detached from ctx so cleanup still runs after cancellation;
+		// no-op if already committed
+		_ = pgxTx.Rollback(context.WithoutCancel(ctx))
 	}()
 
 	if err := fn(Tx{tx: pgxTx}); err != nil {
