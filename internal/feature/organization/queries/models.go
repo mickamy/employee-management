@@ -5,9 +5,8 @@
 package queries
 
 import (
-	"time"
-
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Department struct {
@@ -26,5 +25,5 @@ type Employee struct {
 type EmployeeHire struct {
 	ID         uuid.UUID
 	EmployeeID uuid.UUID
-	HiredOn    time.Time
+	HiredOn    pgtype.Date
 }
