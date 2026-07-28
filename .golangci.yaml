@@ -17,10 +17,10 @@ linters:
         migration-tooling-is-test-only:
           files:
             - "!$test"
-            - "!**/internal/storage/db/migrate/**"
+            - "!**/internal/infra/storage/db/migrate/**"
             - "!**/internal/test/**"
           deny:
-            - pkg: github.com/mickamy/employee-management/internal/storage/db/migrate
+            - pkg: github.com/mickamy/employee-management/internal/infra/storage/db/migrate
               desc: the migrate runner is test-only; deployments use the goose CLI (make db-migrate)
             - pkg: github.com/pressly/goose
               desc: goose is migration tooling; runtime code must not link it

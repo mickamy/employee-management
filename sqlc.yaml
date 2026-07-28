@@ -1,7 +1,7 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    schema: "internal/storage/db/migrate/sql"
+    schema: "internal/infra/storage/db/migrate/sql"
     queries: "internal/feature/employee/queries/employee_queries.sql"
     gen:
       go:
@@ -14,7 +14,7 @@ sql:
           - db_type: "date"
             go_type: "time.Time"
   - engine: "postgresql"
-    schema: "internal/storage/db/migrate/sql"
+    schema: "internal/infra/storage/db/migrate/sql"
     queries: "internal/feature/organization/queries/department_queries.sql"
     gen:
       go:

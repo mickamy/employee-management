@@ -8,8 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/mickamy/employee-management/internal/config"
-
-	"github.com/mickamy/employee-management/internal/storage/db"
+	"github.com/mickamy/employee-management/internal/infra/storage/db"
 )
 
 func TestNew(t *testing.T) {

@@ -9,11 +9,10 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/mickamy/employee-management/internal/errors/aerrors"
-
 	"github.com/mickamy/employee-management/internal/feature/employee/model"
 	"github.com/mickamy/employee-management/internal/feature/employee/queries"
-	"github.com/mickamy/employee-management/internal/storage/db"
-	"github.com/mickamy/employee-management/internal/storage/tx"
+	"github.com/mickamy/employee-management/internal/infra/storage/db"
+	"github.com/mickamy/employee-management/internal/infra/storage/tx"
 )
 
 type Employee interface {

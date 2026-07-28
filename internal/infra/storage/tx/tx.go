@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 
-	"github.com/mickamy/employee-management/internal/storage/db"
+	"github.com/mickamy/employee-management/internal/infra/storage/db"
 )
 
 // DBTX is the narrow query interface repositories hand to sqlc. It matches
