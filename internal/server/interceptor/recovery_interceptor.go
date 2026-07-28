@@ -25,7 +25,7 @@ func Recovery() connect.UnaryInterceptorFunc {
 						"stack", string(buf[:n]),
 					)
 					resp = nil
-					err = connect.NewError(connect.CodeInternal, nil)
+					err = connect.NewError(connect.CodeInternal, errInternal)
 				}
 			}()
 			return next(ctx, req)
