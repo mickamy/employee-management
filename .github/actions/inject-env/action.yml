@@ -1,0 +1,7 @@
+name: Inject .env
+description: Generate .env from .env.example so make targets can run.
+runs:
+  using: composite
+  steps:
+    - run: envsubst < .env.example > .env
+      shell: bash

@@ -1,19 +1,37 @@
--include .env
-export DATABASE_URL DATABASE_WRITER_URL DATABASE_READER_URL
+include .env
+export ENV MODULE_ROOT DATABASE_URL DATABASE_WRITER_URL DATABASE_READER_URL
 
 BUILD_DIR = bin
-GOOSE = go tool -modfile=tools/go.mod goose -dir internal/storage/db/migrations
+GOOSE = go tool -modfile=tools/go.mod goose -dir internal/storage/db/migrate/sql
 DB_USER = app
 DB_NAME = employee_management
 
-.PHONY: build clean test lint compose-up compose-up-d compose-down db-migrate db-create db-drop db-reset new-migration
+.PHONY: build \
+		clean \
+		test \
+		lint \
+		compose-up \
+		compose-up-d \
+		compose-down \
+		db-create \
+		db-drop \
+		db-migrate \
+		db-reset \
+		gen \
+		gen-buf \
+		gen-go \
+		gen-injector \
+		gen-sqlc \
+		new-migration \
+
+.env:
+	envsubst < .env.example > $@
 
 build:
 	@mkdir -p $(BUILD_DIR)
 	go build -o $(BUILD_DIR)/server ./cmd/server
 
 clean:
-	@echo "Cleaning up..."
 	rm -rf $(BUILD_DIR)
 
 test:
@@ -35,12 +53,6 @@ compose-up-d:
 compose-down:
 	docker compose down
 
-# Applies migrations to whatever DATABASE_URL points at — this is the
-# deployment path. Destructive targets (db-create / db-drop) stay local-only
-# via docker compose exec.
-db-migrate:
-	$(GOOSE) postgres "$(DATABASE_URL)" up
-
 db-create:
 	docker compose exec -T db psql -U $(DB_USER) -d postgres -tAc \
 		"SELECT 1 FROM pg_database WHERE datname = '$(DB_NAME)'" | grep -q 1 || \
@@ -49,7 +61,31 @@ db-create:
 db-drop:
 	docker compose exec -T db dropdb -U $(DB_USER) --force --if-exists $(DB_NAME)
 
+# Applies migrations to whatever DATABASE_URL points at — this is the
+# deployment path. Destructive targets (db-create / db-drop) stay local-only
+# via docker compose exec.
+db-migrate:
+	$(GOOSE) postgres "$(DATABASE_URL)" up
+
 db-reset: db-drop db-create db-migrate
+
+gen: gen-buf gen-go gen-injector gen-sqlc
+
+gen-buf:
+	@command -v buf >/dev/null 2>&1 || { \
+		echo "buf is not installed"; \
+		exit 1; \
+	}
+	buf generate
+
+gen-go:
+	go generate ./...
+
+gen-injector:
+	go tool -modfile=tools/go.mod injector ./...
+
+gen-sqlc:
+	go tool -modfile=tools/go.mod sqlc generate
 
 new-migration:
 	@if [ -z "$(name)" ]; then \

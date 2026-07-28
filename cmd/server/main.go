@@ -14,22 +14,38 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/mickamy/employee-management/internal/di"
+	"github.com/mickamy/employee-management/internal/feature/employee/handler"
+	"github.com/mickamy/employee-management/internal/lib/logger"
 	"github.com/mickamy/employee-management/internal/server"
 )
 
 func main() {
-	if err := run(); err != nil {
+	cfg := di.NewConfig()
+	logger.Init(cfg.App)
+
+	if err := run(*cfg); err != nil {
 		slog.Error("server exited with error", "error", err)
 		os.Exit(1)
 	}
 }
 
-func run() error {
-	port := strings.TrimPrefix(cmp.Or(os.Getenv("PORT"), "8080"), ":")
-	srv := server.New(":" + port)
-
+func run(cfg di.Config) error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	infra, err := di.NewInfra(ctx, &cfg)
+	if err != nil {
+		return fmt.Errorf("build infrastructure: %w", err)
+	}
+	defer func() {
+		_ = infra.Close()
+	}()
+
+	employee := handler.NewEmployee(*infra)
+
+	port := strings.TrimPrefix(cmp.Or(os.Getenv("PORT"), "8080"), ":")
+	srv := server.New(":"+port, cfg, employee)
 
 	var lc net.ListenConfig
 	ln, err := lc.Listen(ctx, "tcp", srv.Addr)

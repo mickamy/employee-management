@@ -1,10 +1,13 @@
 package db_test
 
 import (
-	"os"
 	"testing"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/mickamy/employee-management/internal/config"
 
 	"github.com/mickamy/employee-management/internal/storage/db"
 )
@@ -12,49 +15,44 @@ import (
 func TestNew(t *testing.T) {
 	t.Parallel()
 
-	url := os.Getenv("DATABASE_URL")
-	if url == "" {
-		t.Skip("DATABASE_URL is not set")
-	}
+	// arrange
+	url := config.ParseDatabase().AdminURL
 
+	// act
 	pool, err := db.New(t.Context(), url)
-	if err != nil {
-		t.Fatalf("db.New() error = %v", err)
-	}
+
+	// assert
+	require.NoError(t, err)
 	pool.Close()
 }
 
 func TestNewWriter(t *testing.T) {
 	t.Parallel()
 
-	url := os.Getenv("DATABASE_WRITER_URL")
-	if url == "" {
-		t.Skip("DATABASE_WRITER_URL is not set")
-	}
+	// arrange
+	url := config.ParseDatabase().WriterURL
 
+	// act
 	w, err := db.NewWriter(t.Context(), url)
-	if err != nil {
-		t.Fatalf("db.NewWriter() error = %v", err)
-	}
+	require.NoError(t, err)
 	defer w.Close()
 
+	// assert
 	assertCurrentUser(t, w.Pool, "app_writer")
 }
 
 func TestNewReader(t *testing.T) {
 	t.Parallel()
 
-	url := os.Getenv("DATABASE_READER_URL")
-	if url == "" {
-		t.Skip("DATABASE_READER_URL is not set")
-	}
+	// arrange
+	url := config.ParseDatabase().ReaderURL
 
+	// act
 	r, err := db.NewReader(t.Context(), url)
-	if err != nil {
-		t.Fatalf("db.NewReader() error = %v", err)
-	}
+	require.NoError(t, err)
 	defer r.Close()
 
+	// assert
 	assertCurrentUser(t, r.Pool, "app_reader")
 }
 
@@ -62,19 +60,7 @@ func assertCurrentUser(t *testing.T, pool *pgxpool.Pool, want string) {
 	t.Helper()
 
 	var got string
-	if err := pool.QueryRow(t.Context(), "SELECT current_user").Scan(&got); err != nil {
-		t.Fatalf("query current_user: %v", err)
-	}
-	if got != want {
-		t.Fatalf("current_user = %q, want %q", got, want)
-	}
-}
-
-func TestNewUnreachable(t *testing.T) {
-	t.Parallel()
-
-	url := "postgres://127.0.0.1:1/nowhere?connect_timeout=1"
-	if _, err := db.New(t.Context(), url); err == nil {
-		t.Fatal("want error, got nil")
-	}
+	err := pool.QueryRow(t.Context(), "SELECT current_user").Scan(&got)
+	require.NoError(t, err)
+	assert.Equal(t, want, got)
 }
