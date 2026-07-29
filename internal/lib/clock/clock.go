@@ -54,3 +54,7 @@ func Get(ctx context.Context) Clock {
 func Set(ctx context.Context, c Clock) context.Context {
 	return context.WithValue(ctx, clockKey{}, c)
 }
+
+func Now(ctx context.Context) time.Time {
+	return Get(ctx).Now()
+}

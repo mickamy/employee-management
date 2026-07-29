@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"connectrpc.com/connect"
+
 	"github.com/mickamy/employee-management/internal/lib/clock"
 )
 
