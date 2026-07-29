@@ -10,6 +10,7 @@ DB_NAME = employee_management
 		clean \
 		test \
 		lint \
+		lint-fix \
 		compose-up \
 		compose-up-d \
 		compose-down \
@@ -43,6 +44,13 @@ lint:
 		exit 1; \
 	}
 	golangci-lint run
+
+lint-fix:
+	@command -v golangci-lint >/dev/null 2>&1 || { \
+		echo "golangci-lint is not installed"; \
+		exit 1; \
+	}
+	golangci-lint run --fix
 
 compose-up:
 	docker compose up
