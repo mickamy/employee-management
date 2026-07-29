@@ -19,16 +19,17 @@ func TestRevokeRelease_Do(t *testing.T) {
 
 	// arrange: a release decided ahead of its effective date
 	infra := tinfra.New(t)
+	ctx := fixedNow(t)
 	employeeID := hireEmployee(t, infra)
 	departmentID := createDepartment(t, infra)
-	assigned, err := usecase.NewAssignEmployee(infra).Do(t.Context(), usecase.AssignEmployeeInput{
+	assigned, err := usecase.NewAssignEmployee(infra).Do(ctx, usecase.AssignEmployeeInput{
 		EmployeeID:   employeeID,
 		DepartmentID: departmentID,
 		Position:     model.PositionMember,
 		AssignedOn:   times.Date(2026, 4, 1),
 	})
 	require.NoError(t, err)
-	_, err = usecase.NewReleaseAssignment(infra).Do(t.Context(), usecase.ReleaseAssignmentInput{
+	_, err = usecase.NewReleaseAssignment(infra).Do(ctx, usecase.ReleaseAssignmentInput{
 		AssignmentID: assigned.Assignment.ID,
 		ReleasedOn:   times.Date(2100, 9, 30),
 	})
@@ -36,14 +37,14 @@ func TestRevokeRelease_Do(t *testing.T) {
 	sut := usecase.NewRevokeRelease(infra)
 
 	// act
-	_, err = sut.Do(t.Context(), usecase.RevokeReleaseInput{
+	_, err = sut.Do(ctx, usecase.RevokeReleaseInput{
 		AssignmentID: assigned.Assignment.ID,
 		Reason:       "plans changed",
 	})
 
 	// assert: the assignment is open again
 	require.NoError(t, err)
-	current, err := usecase.NewGetCurrentAssignment(infra).Do(t.Context(), usecase.GetCurrentAssignmentInput{
+	current, err := usecase.NewGetCurrentAssignment(infra).Do(ctx, usecase.GetCurrentAssignmentInput{
 		EmployeeID: employeeID,
 	})
 	require.NoError(t, err)
@@ -56,9 +57,10 @@ func TestRevokeRelease_Do_NotReleased(t *testing.T) {
 
 	// arrange
 	infra := tinfra.New(t)
+	ctx := fixedNow(t)
 	employeeID := hireEmployee(t, infra)
 	departmentID := createDepartment(t, infra)
-	assigned, err := usecase.NewAssignEmployee(infra).Do(t.Context(), usecase.AssignEmployeeInput{
+	assigned, err := usecase.NewAssignEmployee(infra).Do(ctx, usecase.AssignEmployeeInput{
 		EmployeeID:   employeeID,
 		DepartmentID: departmentID,
 		Position:     model.PositionMember,
@@ -68,7 +70,7 @@ func TestRevokeRelease_Do_NotReleased(t *testing.T) {
 	sut := usecase.NewRevokeRelease(infra)
 
 	// act
-	_, err = sut.Do(t.Context(), usecase.RevokeReleaseInput{
+	_, err = sut.Do(ctx, usecase.RevokeReleaseInput{
 		AssignmentID: assigned.Assignment.ID,
 		Reason:       "nothing to revoke",
 	})
@@ -83,16 +85,17 @@ func TestRevokeRelease_Do_AlreadyInEffect(t *testing.T) {
 
 	// arrange: the release date has already passed
 	infra := tinfra.New(t)
+	ctx := fixedNow(t)
 	employeeID := hireEmployee(t, infra)
 	departmentID := createDepartment(t, infra)
-	assigned, err := usecase.NewAssignEmployee(infra).Do(t.Context(), usecase.AssignEmployeeInput{
+	assigned, err := usecase.NewAssignEmployee(infra).Do(ctx, usecase.AssignEmployeeInput{
 		EmployeeID:   employeeID,
 		DepartmentID: departmentID,
 		Position:     model.PositionMember,
 		AssignedOn:   times.Date(2020, 4, 1),
 	})
 	require.NoError(t, err)
-	_, err = usecase.NewReleaseAssignment(infra).Do(t.Context(), usecase.ReleaseAssignmentInput{
+	_, err = usecase.NewReleaseAssignment(infra).Do(ctx, usecase.ReleaseAssignmentInput{
 		AssignmentID: assigned.Assignment.ID,
 		ReleasedOn:   times.Date(2021, 3, 31),
 	})
@@ -100,7 +103,7 @@ func TestRevokeRelease_Do_AlreadyInEffect(t *testing.T) {
 	sut := usecase.NewRevokeRelease(infra)
 
 	// act
-	_, err = sut.Do(t.Context(), usecase.RevokeReleaseInput{
+	_, err = sut.Do(ctx, usecase.RevokeReleaseInput{
 		AssignmentID: assigned.Assignment.ID,
 		Reason:       "too late",
 	})
@@ -115,22 +118,23 @@ func TestRevokeRelease_Do_LaterAssignmentExists(t *testing.T) {
 
 	// arrange: a successor assignment was already decided
 	infra := tinfra.New(t)
+	ctx := fixedNow(t)
 	employeeID := hireEmployee(t, infra)
 	departmentID := createDepartment(t, infra)
 	assign := usecase.NewAssignEmployee(infra)
-	first, err := assign.Do(t.Context(), usecase.AssignEmployeeInput{
+	first, err := assign.Do(ctx, usecase.AssignEmployeeInput{
 		EmployeeID:   employeeID,
 		DepartmentID: departmentID,
 		Position:     model.PositionMember,
 		AssignedOn:   times.Date(2026, 4, 1),
 	})
 	require.NoError(t, err)
-	_, err = usecase.NewReleaseAssignment(infra).Do(t.Context(), usecase.ReleaseAssignmentInput{
+	_, err = usecase.NewReleaseAssignment(infra).Do(ctx, usecase.ReleaseAssignmentInput{
 		AssignmentID: first.Assignment.ID,
 		ReleasedOn:   times.Date(2100, 9, 30),
 	})
 	require.NoError(t, err)
-	_, err = assign.Do(t.Context(), usecase.AssignEmployeeInput{
+	_, err = assign.Do(ctx, usecase.AssignEmployeeInput{
 		EmployeeID:   employeeID,
 		DepartmentID: departmentID,
 		Position:     model.PositionManager,
@@ -140,7 +144,7 @@ func TestRevokeRelease_Do_LaterAssignmentExists(t *testing.T) {
 	sut := usecase.NewRevokeRelease(infra)
 
 	// act: reopening the first assignment would overlap the successor
-	_, err = sut.Do(t.Context(), usecase.RevokeReleaseInput{
+	_, err = sut.Do(ctx, usecase.RevokeReleaseInput{
 		AssignmentID: first.Assignment.ID,
 		Reason:       "plans changed",
 	})

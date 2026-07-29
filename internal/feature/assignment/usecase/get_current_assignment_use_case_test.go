@@ -19,9 +19,10 @@ func TestGetCurrentAssignment_Do_ReadsOwnWrite(t *testing.T) {
 
 	// arrange: the projection is transactional, so the write is immediately visible
 	infra := tinfra.New(t)
+	ctx := fixedNow(t)
 	employeeID := hireEmployee(t, infra)
 	departmentID := createDepartment(t, infra)
-	assigned, err := usecase.NewAssignEmployee(infra).Do(t.Context(), usecase.AssignEmployeeInput{
+	assigned, err := usecase.NewAssignEmployee(infra).Do(ctx, usecase.AssignEmployeeInput{
 		EmployeeID:   employeeID,
 		DepartmentID: departmentID,
 		Position:     model.PositionMember,
@@ -31,7 +32,7 @@ func TestGetCurrentAssignment_Do_ReadsOwnWrite(t *testing.T) {
 	sut := usecase.NewGetCurrentAssignment(infra)
 
 	// act
-	out, err := sut.Do(t.Context(), usecase.GetCurrentAssignmentInput{
+	out, err := sut.Do(ctx, usecase.GetCurrentAssignmentInput{
 		EmployeeID: employeeID,
 	})
 
@@ -46,9 +47,10 @@ func TestGetCurrentAssignment_Do_FutureDatedIsNotCurrent(t *testing.T) {
 
 	// arrange: the decision exists but only takes effect in the future
 	infra := tinfra.New(t)
+	ctx := fixedNow(t)
 	employeeID := hireEmployee(t, infra)
 	departmentID := createDepartment(t, infra)
-	_, err := usecase.NewAssignEmployee(infra).Do(t.Context(), usecase.AssignEmployeeInput{
+	_, err := usecase.NewAssignEmployee(infra).Do(ctx, usecase.AssignEmployeeInput{
 		EmployeeID:   employeeID,
 		DepartmentID: departmentID,
 		Position:     model.PositionMember,
@@ -58,14 +60,14 @@ func TestGetCurrentAssignment_Do_FutureDatedIsNotCurrent(t *testing.T) {
 	sut := usecase.NewGetCurrentAssignment(infra)
 
 	// act
-	_, err = sut.Do(t.Context(), usecase.GetCurrentAssignmentInput{
+	_, err = sut.Do(ctx, usecase.GetCurrentAssignmentInput{
 		EmployeeID: employeeID,
 	})
 
 	// assert: nothing is current today, yet the history shows the decision
 	require.Error(t, err)
 	require.ErrorIs(t, err, aerrors.ErrNotFound)
-	history, err := usecase.NewListAssignmentHistory(infra).Do(t.Context(), usecase.ListAssignmentHistoryInput{
+	history, err := usecase.NewListAssignmentHistory(infra).Do(ctx, usecase.ListAssignmentHistoryInput{
 		EmployeeID: employeeID,
 	})
 	require.NoError(t, err)

@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -12,7 +13,17 @@ import (
 	eusecase "github.com/mickamy/employee-management/internal/feature/employee/usecase"
 	ofixture "github.com/mickamy/employee-management/internal/feature/organization/fixture"
 	ousecase "github.com/mickamy/employee-management/internal/feature/organization/usecase"
+	"github.com/mickamy/employee-management/internal/lib/clock"
+	"github.com/mickamy/employee-management/internal/lib/times"
 )
+
+// fixedNow pins "today" so date-dependent branches do not depend on the wall
+// clock of the machine running the tests.
+func fixedNow(t *testing.T) context.Context {
+	t.Helper()
+
+	return clock.Set(t.Context(), clock.NewFixed(times.Date(2026, 7, 1)))
+}
 
 func hireEmployee(t *testing.T, infra di.Infra) uuid.UUID {
 	t.Helper()

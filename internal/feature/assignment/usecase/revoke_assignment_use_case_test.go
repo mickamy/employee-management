@@ -19,9 +19,10 @@ func TestRevokeAssignment_Do(t *testing.T) {
 
 	// arrange: a decision that has not yet taken effect
 	infra := tinfra.New(t)
+	ctx := fixedNow(t)
 	employeeID := hireEmployee(t, infra)
 	departmentID := createDepartment(t, infra)
-	assigned, err := usecase.NewAssignEmployee(infra).Do(t.Context(), usecase.AssignEmployeeInput{
+	assigned, err := usecase.NewAssignEmployee(infra).Do(ctx, usecase.AssignEmployeeInput{
 		EmployeeID:   employeeID,
 		DepartmentID: departmentID,
 		Position:     model.PositionMember,
@@ -31,14 +32,14 @@ func TestRevokeAssignment_Do(t *testing.T) {
 	sut := usecase.NewRevokeAssignment(infra)
 
 	// act
-	_, err = sut.Do(t.Context(), usecase.RevokeAssignmentInput{
+	_, err = sut.Do(ctx, usecase.RevokeAssignmentInput{
 		AssignmentID: assigned.Assignment.ID,
 		Reason:       "wrong department",
 	})
 
 	// assert: the revoked decision no longer appears in the clean view
 	require.NoError(t, err)
-	history, err := usecase.NewListAssignmentHistory(infra).Do(t.Context(), usecase.ListAssignmentHistoryInput{
+	history, err := usecase.NewListAssignmentHistory(infra).Do(ctx, usecase.ListAssignmentHistoryInput{
 		EmployeeID: employeeID,
 	})
 	require.NoError(t, err)
@@ -50,9 +51,10 @@ func TestRevokeAssignment_Do_AlreadyInEffect(t *testing.T) {
 
 	// arrange
 	infra := tinfra.New(t)
+	ctx := fixedNow(t)
 	employeeID := hireEmployee(t, infra)
 	departmentID := createDepartment(t, infra)
-	assigned, err := usecase.NewAssignEmployee(infra).Do(t.Context(), usecase.AssignEmployeeInput{
+	assigned, err := usecase.NewAssignEmployee(infra).Do(ctx, usecase.AssignEmployeeInput{
 		EmployeeID:   employeeID,
 		DepartmentID: departmentID,
 		Position:     model.PositionMember,
@@ -62,7 +64,7 @@ func TestRevokeAssignment_Do_AlreadyInEffect(t *testing.T) {
 	sut := usecase.NewRevokeAssignment(infra)
 
 	// act
-	_, err = sut.Do(t.Context(), usecase.RevokeAssignmentInput{
+	_, err = sut.Do(ctx, usecase.RevokeAssignmentInput{
 		AssignmentID: assigned.Assignment.ID,
 		Reason:       "too late",
 	})
@@ -77,16 +79,17 @@ func TestRevokeAssignment_Do_ReleasedAssignment(t *testing.T) {
 
 	// arrange
 	infra := tinfra.New(t)
+	ctx := fixedNow(t)
 	employeeID := hireEmployee(t, infra)
 	departmentID := createDepartment(t, infra)
-	assigned, err := usecase.NewAssignEmployee(infra).Do(t.Context(), usecase.AssignEmployeeInput{
+	assigned, err := usecase.NewAssignEmployee(infra).Do(ctx, usecase.AssignEmployeeInput{
 		EmployeeID:   employeeID,
 		DepartmentID: departmentID,
 		Position:     model.PositionMember,
 		AssignedOn:   times.Date(2100, 4, 1),
 	})
 	require.NoError(t, err)
-	_, err = usecase.NewReleaseAssignment(infra).Do(t.Context(), usecase.ReleaseAssignmentInput{
+	_, err = usecase.NewReleaseAssignment(infra).Do(ctx, usecase.ReleaseAssignmentInput{
 		AssignmentID: assigned.Assignment.ID,
 		ReleasedOn:   times.Date(2100, 9, 30),
 	})
@@ -94,7 +97,7 @@ func TestRevokeAssignment_Do_ReleasedAssignment(t *testing.T) {
 	sut := usecase.NewRevokeAssignment(infra)
 
 	// act
-	_, err = sut.Do(t.Context(), usecase.RevokeAssignmentInput{
+	_, err = sut.Do(ctx, usecase.RevokeAssignmentInput{
 		AssignmentID: assigned.Assignment.ID,
 		Reason:       "changed plans",
 	})
