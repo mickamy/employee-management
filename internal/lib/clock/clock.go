@@ -14,7 +14,7 @@ func New() Clock { return System{} }
 
 type System struct{}
 
-func (System) Now() time.Time { return time.Now() }
+func (System) Now() time.Time { return time.Now().UTC() }
 
 type Fixed struct {
 	mu sync.RWMutex
