@@ -51,7 +51,7 @@ func (uc ListManagerHistory) Do(ctx context.Context, input ListManagerHistoryInp
 			}
 		}
 
-		names, err = uc.employeeRepository.Names(ctx, ids)
+		names, err = uc.employeeRepository.Bind(tx).Names(ctx, ids)
 		if err != nil {
 			return fmt.Errorf("get employee names: %w", err)
 		}
