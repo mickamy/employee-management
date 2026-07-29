@@ -23,10 +23,8 @@ const (
 )
 
 type GetCurrentAssignmentRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	EmployeeId string                 `protobuf:"bytes,1,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
-	// Waits until the projection catches up to this revision. 0 means no waiting.
-	MinRevision   int64 `protobuf:"varint,2,opt,name=min_revision,json=minRevision,proto3" json:"min_revision,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EmployeeId    string                 `protobuf:"bytes,1,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -66,13 +64,6 @@ func (x *GetCurrentAssignmentRequest) GetEmployeeId() string {
 		return x.EmployeeId
 	}
 	return ""
-}
-
-func (x *GetCurrentAssignmentRequest) GetMinRevision() int64 {
-	if x != nil {
-		return x.MinRevision
-	}
-	return 0
 }
 
 type GetCurrentAssignmentResponse struct {
@@ -122,7 +113,6 @@ func (x *GetCurrentAssignmentResponse) GetAssignment() *Assignment {
 type ListAssignmentHistoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EmployeeId    string                 `protobuf:"bytes,1,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
-	MinRevision   int64                  `protobuf:"varint,2,opt,name=min_revision,json=minRevision,proto3" json:"min_revision,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -162,13 +152,6 @@ func (x *ListAssignmentHistoryRequest) GetEmployeeId() string {
 		return x.EmployeeId
 	}
 	return ""
-}
-
-func (x *ListAssignmentHistoryRequest) GetMinRevision() int64 {
-	if x != nil {
-		return x.MinRevision
-	}
-	return 0
 }
 
 type ListAssignmentHistoryResponse struct {
@@ -218,7 +201,6 @@ func (x *ListAssignmentHistoryResponse) GetAssignments() []*Assignment {
 type ListManagerHistoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EmployeeId    string                 `protobuf:"bytes,1,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
-	MinRevision   int64                  `protobuf:"varint,2,opt,name=min_revision,json=minRevision,proto3" json:"min_revision,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -258,13 +240,6 @@ func (x *ListManagerHistoryRequest) GetEmployeeId() string {
 		return x.EmployeeId
 	}
 	return ""
-}
-
-func (x *ListManagerHistoryRequest) GetMinRevision() int64 {
-	if x != nil {
-		return x.MinRevision
-	}
-	return 0
 }
 
 type ListManagerHistoryResponse struct {
@@ -315,25 +290,22 @@ var File_assignment_v1_assignment_query_service_proto protoreflect.FileDescripto
 
 const file_assignment_v1_assignment_query_service_proto_rawDesc = "" +
 	"\n" +
-	",assignment/v1/assignment_query_service.proto\x12\rassignment.v1\x1a\x1eassignment/v1/assignment.proto\x1a\x1bbuf/validate/validate.proto\"t\n" +
+	",assignment/v1/assignment_query_service.proto\x12\rassignment.v1\x1a\x1eassignment/v1/assignment.proto\x1a\x1bbuf/validate/validate.proto\"H\n" +
 	"\x1bGetCurrentAssignmentRequest\x12)\n" +
 	"\vemployee_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
-	"employeeId\x12*\n" +
-	"\fmin_revision\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\vminRevision\"Y\n" +
+	"employeeId\"Y\n" +
 	"\x1cGetCurrentAssignmentResponse\x129\n" +
 	"\n" +
 	"assignment\x18\x01 \x01(\v2\x19.assignment.v1.AssignmentR\n" +
-	"assignment\"u\n" +
+	"assignment\"I\n" +
 	"\x1cListAssignmentHistoryRequest\x12)\n" +
 	"\vemployee_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
-	"employeeId\x12*\n" +
-	"\fmin_revision\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\vminRevision\"\\\n" +
+	"employeeId\"\\\n" +
 	"\x1dListAssignmentHistoryResponse\x12;\n" +
-	"\vassignments\x18\x01 \x03(\v2\x19.assignment.v1.AssignmentR\vassignments\"r\n" +
+	"\vassignments\x18\x01 \x03(\v2\x19.assignment.v1.AssignmentR\vassignments\"F\n" +
 	"\x19ListManagerHistoryRequest\x12)\n" +
 	"\vemployee_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
-	"employeeId\x12*\n" +
-	"\fmin_revision\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\vminRevision\"T\n" +
+	"employeeId\"T\n" +
 	"\x1aListManagerHistoryResponse\x126\n" +
 	"\atenures\x18\x01 \x03(\v2\x1c.assignment.v1.ManagerTenureR\atenures2\xe8\x02\n" +
 	"\x16AssignmentQueryService\x12o\n" +

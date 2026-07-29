@@ -42,6 +42,9 @@ const (
 	// AssignmentCommandServiceRevokeAssignmentProcedure is the fully-qualified name of the
 	// AssignmentCommandService's RevokeAssignment RPC.
 	AssignmentCommandServiceRevokeAssignmentProcedure = "/assignment.v1.AssignmentCommandService/RevokeAssignment"
+	// AssignmentCommandServiceRevokeReleaseProcedure is the fully-qualified name of the
+	// AssignmentCommandService's RevokeRelease RPC.
+	AssignmentCommandServiceRevokeReleaseProcedure = "/assignment.v1.AssignmentCommandService/RevokeRelease"
 )
 
 // AssignmentCommandServiceClient is a client for the assignment.v1.AssignmentCommandService
@@ -52,6 +55,9 @@ type AssignmentCommandServiceClient interface {
 	// Revokes an assignment decision that has not yet taken effect. Undoing an
 	// assignment already in effect is a release, not a revocation.
 	RevokeAssignment(context.Context, *connect.Request[v1.RevokeAssignmentRequest]) (*connect.Response[v1.RevokeAssignmentResponse], error)
+	// Revokes a release decision that has not yet taken effect; the assignment
+	// stays active. Rejected once a later assignment has been decided.
+	RevokeRelease(context.Context, *connect.Request[v1.RevokeReleaseRequest]) (*connect.Response[v1.RevokeReleaseResponse], error)
 }
 
 // NewAssignmentCommandServiceClient constructs a client for the
@@ -83,6 +89,12 @@ func NewAssignmentCommandServiceClient(httpClient connect.HTTPClient, baseURL st
 			connect.WithSchema(assignmentCommandServiceMethods.ByName("RevokeAssignment")),
 			connect.WithClientOptions(opts...),
 		),
+		revokeRelease: connect.NewClient[v1.RevokeReleaseRequest, v1.RevokeReleaseResponse](
+			httpClient,
+			baseURL+AssignmentCommandServiceRevokeReleaseProcedure,
+			connect.WithSchema(assignmentCommandServiceMethods.ByName("RevokeRelease")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -91,6 +103,7 @@ type assignmentCommandServiceClient struct {
 	assignEmployee    *connect.Client[v1.AssignEmployeeRequest, v1.AssignEmployeeResponse]
 	releaseAssignment *connect.Client[v1.ReleaseAssignmentRequest, v1.ReleaseAssignmentResponse]
 	revokeAssignment  *connect.Client[v1.RevokeAssignmentRequest, v1.RevokeAssignmentResponse]
+	revokeRelease     *connect.Client[v1.RevokeReleaseRequest, v1.RevokeReleaseResponse]
 }
 
 // AssignEmployee calls assignment.v1.AssignmentCommandService.AssignEmployee.
@@ -108,6 +121,11 @@ func (c *assignmentCommandServiceClient) RevokeAssignment(ctx context.Context, r
 	return c.revokeAssignment.CallUnary(ctx, req)
 }
 
+// RevokeRelease calls assignment.v1.AssignmentCommandService.RevokeRelease.
+func (c *assignmentCommandServiceClient) RevokeRelease(ctx context.Context, req *connect.Request[v1.RevokeReleaseRequest]) (*connect.Response[v1.RevokeReleaseResponse], error) {
+	return c.revokeRelease.CallUnary(ctx, req)
+}
+
 // AssignmentCommandServiceHandler is an implementation of the
 // assignment.v1.AssignmentCommandService service.
 type AssignmentCommandServiceHandler interface {
@@ -116,6 +134,9 @@ type AssignmentCommandServiceHandler interface {
 	// Revokes an assignment decision that has not yet taken effect. Undoing an
 	// assignment already in effect is a release, not a revocation.
 	RevokeAssignment(context.Context, *connect.Request[v1.RevokeAssignmentRequest]) (*connect.Response[v1.RevokeAssignmentResponse], error)
+	// Revokes a release decision that has not yet taken effect; the assignment
+	// stays active. Rejected once a later assignment has been decided.
+	RevokeRelease(context.Context, *connect.Request[v1.RevokeReleaseRequest]) (*connect.Response[v1.RevokeReleaseResponse], error)
 }
 
 // NewAssignmentCommandServiceHandler builds an HTTP handler from the service implementation. It
@@ -143,6 +164,12 @@ func NewAssignmentCommandServiceHandler(svc AssignmentCommandServiceHandler, opt
 		connect.WithSchema(assignmentCommandServiceMethods.ByName("RevokeAssignment")),
 		connect.WithHandlerOptions(opts...),
 	)
+	assignmentCommandServiceRevokeReleaseHandler := connect.NewUnaryHandler(
+		AssignmentCommandServiceRevokeReleaseProcedure,
+		svc.RevokeRelease,
+		connect.WithSchema(assignmentCommandServiceMethods.ByName("RevokeRelease")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/assignment.v1.AssignmentCommandService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AssignmentCommandServiceAssignEmployeeProcedure:
@@ -151,6 +178,8 @@ func NewAssignmentCommandServiceHandler(svc AssignmentCommandServiceHandler, opt
 			assignmentCommandServiceReleaseAssignmentHandler.ServeHTTP(w, r)
 		case AssignmentCommandServiceRevokeAssignmentProcedure:
 			assignmentCommandServiceRevokeAssignmentHandler.ServeHTTP(w, r)
+		case AssignmentCommandServiceRevokeReleaseProcedure:
+			assignmentCommandServiceRevokeReleaseHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -170,4 +199,8 @@ func (UnimplementedAssignmentCommandServiceHandler) ReleaseAssignment(context.Co
 
 func (UnimplementedAssignmentCommandServiceHandler) RevokeAssignment(context.Context, *connect.Request[v1.RevokeAssignmentRequest]) (*connect.Response[v1.RevokeAssignmentResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("assignment.v1.AssignmentCommandService.RevokeAssignment is not implemented"))
+}
+
+func (UnimplementedAssignmentCommandServiceHandler) RevokeRelease(context.Context, *connect.Request[v1.RevokeReleaseRequest]) (*connect.Response[v1.RevokeReleaseResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("assignment.v1.AssignmentCommandService.RevokeRelease is not implemented"))
 }

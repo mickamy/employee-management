@@ -49,23 +49,30 @@ A manager is not stored as direct data. It is derived from the MANAGER assignmen
 ### Command/query service split: the decision rule
 
 A context splits its proto into CommandService / QueryService if and only if it has derived read models — shapes that
-can be queried but that no command writes (assignment's ManagerTenure). The split then communicates something true:
-everything on the query side may lag behind an accepted command (hence revision / min_revision), and everything on the
-command side is authoritative.
+can be queried but that no command writes (assignment's ManagerTenure). The split keeps the contract honest: query-side
+shapes are projections composed from events, command-side responses are authoritative.
 
 A context without derived read models gets a single service (employee, organization). Splitting there would be a false
 signal: identical shape, different semantics — its query side would be immediately consistent, so readers could no
 longer infer consistency guarantees from the contract's shape. What is uniform across contexts is this rule, not the
 shape it produces. Method-level discipline (commands mutate, queries don't) applies everywhere regardless.
 
-### Read-your-writes
+### Synchronous projection
 
-Command responses return the event stream revision, and queries accept min_revision. Waiting for the projection to catch
-up gives the UI a path that hides eventual consistency.
+Projections live in the same database as the event log, so commands update them in the transaction that appends the
+event, and queries are immediately consistent — the contract carries no revision plumbing. Fold-on-read and an async
+projector were measured and rejected: at this domain's data volume (single-digit milliseconds even for a 40-year
+manager history at 10,000 employees) a transactional projection costs one extra write, while the alternatives cost
+either jsonb query complexity or a projector process, checkpoints, and revision/min_revision on every query. If a
+projection ever has to leave the transaction (a separate store, an expensive derivation), commands returning the
+stream revision and queries accepting min_revision is the escape hatch to reintroduce.
 
 ## Out of scope (future slices)
 
 - Concurrent assignments (an employee holding multiple posts at once). v1 assumes a single assignment per employee
+- A first-class transfer decision (one event ending an assignment and starting the next on the same date). v1 composes
+  a transfer from a release and an assignment; the event vocabulary is additive, so introducing TransferDecided later
+  costs no migration
 - The department tree and reorganizations (generation-based, with as-of queries; gets its own slice), and denormalizing
   department names into read models
 - payroll (salary revisions; bitemporal effective/recorded dates)

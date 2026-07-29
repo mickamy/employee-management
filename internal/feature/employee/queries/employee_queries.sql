@@ -19,3 +19,8 @@ FROM employees AS e
 WHERE e.id > sqlc.arg(after_id)
 ORDER BY e.id
 LIMIT sqlc.arg(page_size);
+
+-- name: GetEmployeeNames :many
+SELECT id, name
+FROM employees
+WHERE id = ANY (sqlc.arg(ids)::uuid[]);

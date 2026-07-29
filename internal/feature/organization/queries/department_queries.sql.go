@@ -27,6 +27,17 @@ func (q *Queries) CreateDepartment(ctx context.Context, arg CreateDepartmentPara
 	return err
 }
 
+const departmentExists = `-- name: DepartmentExists :one
+SELECT EXISTS (SELECT 1 FROM departments WHERE id = $1)
+`
+
+func (q *Queries) DepartmentExists(ctx context.Context, id uuid.UUID) (bool, error) {
+	row := q.db.QueryRow(ctx, departmentExists, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const listDepartments = `-- name: ListDepartments :many
 SELECT id, code, name
 FROM departments

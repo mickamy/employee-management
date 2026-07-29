@@ -12,6 +12,9 @@ service AssignmentCommandService {
   // Revokes an assignment decision that has not yet taken effect. Undoing an
   // assignment already in effect is a release, not a revocation.
   rpc RevokeAssignment(RevokeAssignmentRequest) returns (RevokeAssignmentResponse);
+  // Revokes a release decision that has not yet taken effect; the assignment
+  // stays active. Rejected once a later assignment has been decided.
+  rpc RevokeRelease(RevokeReleaseRequest) returns (RevokeReleaseResponse);
 }
 
 message AssignEmployeeRequest {
@@ -30,8 +33,6 @@ message AssignEmployeeRequest {
 
 message AssignEmployeeResponse {
   Assignment assignment = 1;
-  // Event stream revision. Pass it as min_revision on queries for read-your-writes.
-  int64 revision = 2;
 }
 
 message ReleaseAssignmentRequest {
@@ -48,7 +49,6 @@ message ReleaseAssignmentRequest {
 
 message ReleaseAssignmentResponse {
   Assignment assignment = 1;
-  int64 revision = 2;
 }
 
 message RevokeAssignmentRequest {
@@ -56,6 +56,11 @@ message RevokeAssignmentRequest {
   string reason = 2 [(buf.validate.field).string = {min_len: 1, max_len: 500}];
 }
 
-message RevokeAssignmentResponse {
-  int64 revision = 1;
+message RevokeAssignmentResponse {}
+
+message RevokeReleaseRequest {
+  string assignment_id = 1 [(buf.validate.field).string.uuid = true];
+  string reason = 2 [(buf.validate.field).string = {min_len: 1, max_len: 500}];
 }
+
+message RevokeReleaseResponse {}

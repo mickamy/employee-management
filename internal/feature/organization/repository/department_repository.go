@@ -19,6 +19,7 @@ type Department interface {
 	Create(ctx context.Context, department model.Department) error
 	Rename(ctx context.Context, id uuid.UUID, name string) (model.Department, error)
 	List(ctx context.Context) ([]model.Department, error)
+	Exists(ctx context.Context, id uuid.UUID) (bool, error)
 	Bind(tx tx.Tx) Department
 }
 
@@ -67,6 +68,14 @@ func (r department) Rename(ctx context.Context, id uuid.UUID, name string) (mode
 		Code: row.Code,
 		Name: row.Name,
 	}, nil
+}
+
+func (r department) Exists(ctx context.Context, id uuid.UUID) (bool, error) {
+	exists, err := r.q.DepartmentExists(ctx, id)
+	if err != nil {
+		return false, fmt.Errorf("department exists: %w", err)
+	}
+	return exists, nil
 }
 
 func (r department) List(ctx context.Context) ([]model.Department, error) {

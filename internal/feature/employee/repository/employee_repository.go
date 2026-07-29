@@ -17,6 +17,7 @@ import (
 
 type Employee interface {
 	Find(ctx context.Context, id uuid.UUID) (model.Employee, error)
+	Names(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID]string, error)
 	List(ctx context.Context, afterID uuid.UUID, limit int32) ([]model.Employee, error)
 	Create(ctx context.Context, employee model.Employee) error
 	CreateHire(ctx context.Context, hire model.EmployeeHire) error
@@ -52,6 +53,19 @@ func (r employee) Find(ctx context.Context, id uuid.UUID) (model.Employee, error
 		Email:   row.Email,
 		HiredOn: row.HiredOn,
 	}, nil
+}
+
+func (r employee) Names(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID]string, error) {
+	rows, err := r.q.GetEmployeeNames(ctx, ids)
+	if err != nil {
+		return nil, fmt.Errorf("get employee names: %w", err)
+	}
+
+	names := make(map[uuid.UUID]string, len(rows))
+	for _, row := range rows {
+		names[row.ID] = row.Name
+	}
+	return names, nil
 }
 
 func (r employee) List(ctx context.Context, afterID uuid.UUID, limit int32) ([]model.Employee, error) {

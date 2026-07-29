@@ -13,8 +13,6 @@ service AssignmentQueryService {
 
 message GetCurrentAssignmentRequest {
   string employee_id = 1 [(buf.validate.field).string.uuid = true];
-  // Waits until the projection catches up to this revision. 0 means no waiting.
-  int64 min_revision = 2 [(buf.validate.field).int64.gte = 0];
 }
 
 message GetCurrentAssignmentResponse {
@@ -23,7 +21,6 @@ message GetCurrentAssignmentResponse {
 
 message ListAssignmentHistoryRequest {
   string employee_id = 1 [(buf.validate.field).string.uuid = true];
-  int64 min_revision = 2 [(buf.validate.field).int64.gte = 0];
 }
 
 message ListAssignmentHistoryResponse {
@@ -32,7 +29,6 @@ message ListAssignmentHistoryResponse {
 
 message ListManagerHistoryRequest {
   string employee_id = 1 [(buf.validate.field).string.uuid = true];
-  int64 min_revision = 2 [(buf.validate.field).int64.gte = 0];
 }
 
 message ListManagerHistoryResponse {
