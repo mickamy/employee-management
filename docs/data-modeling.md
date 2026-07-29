@@ -48,7 +48,10 @@ plays the role of the effective-generation view — derived and rebuildable, and
 allowed (rule 7).
 
 One naming consequence: strictly, what occurs is the decision, so write-side event types lean that way (e.g.,
-AssignmentDecided rather than AssignmentStarted), and assigned_on is the date the decision takes effect.
+AssignmentDecided rather than AssignmentStarted), and assigned_on is the date the decision takes effect. The same
+applies to releases — a release can be decided ahead of its effective date, so the write side records ReleaseDecided
+carrying released_on rather than an AssignmentReleased that names the effect. Revocation takes effect the moment it is
+decided, so AssignmentRevoked already names its own occurrence.
 
 ## Compensating events
 
@@ -67,7 +70,9 @@ hidden) and an audit view (shown struck through) from the same events.
 A data-entry mistake (wrong department) is represented as revoke + re-issue rather than a dedicated correction event,
 keeping the event vocabulary small. Revocation applies only to decisions that have not yet taken effect; undoing a
 decision already in effect is a different business activity — a release, or a retroactive correction, which belongs to
-the bitemporal payroll slice.
+the bitemporal payroll slice. This holds for every pending decision, not only assignments: a release decided ahead of
+its effective date is undone by release_revoked, which reopens the assignment — rejected once a later assignment has
+been decided, since reopening would overlap it.
 
 ## Entity classification
 

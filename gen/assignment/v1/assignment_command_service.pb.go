@@ -92,10 +92,8 @@ func (x *AssignEmployeeRequest) GetAssignedOn() *date.Date {
 }
 
 type AssignEmployeeResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Assignment *Assignment            `protobuf:"bytes,1,opt,name=assignment,proto3" json:"assignment,omitempty"`
-	// Event stream revision. Pass it as min_revision on queries for read-your-writes.
-	Revision      int64 `protobuf:"varint,2,opt,name=revision,proto3" json:"revision,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Assignment    *Assignment            `protobuf:"bytes,1,opt,name=assignment,proto3" json:"assignment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -135,13 +133,6 @@ func (x *AssignEmployeeResponse) GetAssignment() *Assignment {
 		return x.Assignment
 	}
 	return nil
-}
-
-func (x *AssignEmployeeResponse) GetRevision() int64 {
-	if x != nil {
-		return x.Revision
-	}
-	return 0
 }
 
 type ReleaseAssignmentRequest struct {
@@ -199,7 +190,6 @@ func (x *ReleaseAssignmentRequest) GetReleasedOn() *date.Date {
 type ReleaseAssignmentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Assignment    *Assignment            `protobuf:"bytes,1,opt,name=assignment,proto3" json:"assignment,omitempty"`
-	Revision      int64                  `protobuf:"varint,2,opt,name=revision,proto3" json:"revision,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -239,13 +229,6 @@ func (x *ReleaseAssignmentResponse) GetAssignment() *Assignment {
 		return x.Assignment
 	}
 	return nil
-}
-
-func (x *ReleaseAssignmentResponse) GetRevision() int64 {
-	if x != nil {
-		return x.Revision
-	}
-	return 0
 }
 
 type RevokeAssignmentRequest struct {
@@ -302,7 +285,6 @@ func (x *RevokeAssignmentRequest) GetReason() string {
 
 type RevokeAssignmentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Revision      int64                  `protobuf:"varint,1,opt,name=revision,proto3" json:"revision,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -337,11 +319,92 @@ func (*RevokeAssignmentResponse) Descriptor() ([]byte, []int) {
 	return file_assignment_v1_assignment_command_service_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *RevokeAssignmentResponse) GetRevision() int64 {
+type RevokeReleaseRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AssignmentId  string                 `protobuf:"bytes,1,opt,name=assignment_id,json=assignmentId,proto3" json:"assignment_id,omitempty"`
+	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeReleaseRequest) Reset() {
+	*x = RevokeReleaseRequest{}
+	mi := &file_assignment_v1_assignment_command_service_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeReleaseRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeReleaseRequest) ProtoMessage() {}
+
+func (x *RevokeReleaseRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_assignment_v1_assignment_command_service_proto_msgTypes[6]
 	if x != nil {
-		return x.Revision
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
 	}
-	return 0
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeReleaseRequest.ProtoReflect.Descriptor instead.
+func (*RevokeReleaseRequest) Descriptor() ([]byte, []int) {
+	return file_assignment_v1_assignment_command_service_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *RevokeReleaseRequest) GetAssignmentId() string {
+	if x != nil {
+		return x.AssignmentId
+	}
+	return ""
+}
+
+func (x *RevokeReleaseRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+type RevokeReleaseResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeReleaseResponse) Reset() {
+	*x = RevokeReleaseResponse{}
+	mi := &file_assignment_v1_assignment_command_service_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeReleaseResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeReleaseResponse) ProtoMessage() {}
+
+func (x *RevokeReleaseResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_assignment_v1_assignment_command_service_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeReleaseResponse.ProtoReflect.Descriptor instead.
+func (*RevokeReleaseResponse) Descriptor() ([]byte, []int) {
+	return file_assignment_v1_assignment_command_service_proto_rawDescGZIP(), []int{7}
 }
 
 var File_assignment_v1_assignment_command_service_proto protoreflect.FileDescriptor
@@ -357,32 +420,35 @@ const file_assignment_v1_assignment_command_service_proto_rawDesc = "" +
 	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\bposition\x12\xd8\x01\n" +
 	"\vassigned_on\x18\x04 \x01(\v2\x11.google.type.DateB\xa3\x01\xbaH\x9f\x01\xba\x01\x98\x01\n" +
 	"\x11assigned_on.valid\x12)assigned_on must be a valid calendar date\x1aXthis.year >= 1 && this.month >= 1 && this.month <= 12 && this.day >= 1 && this.day <= 31\xc8\x01\x01R\n" +
-	"assignedOn\"o\n" +
+	"assignedOn\"S\n" +
 	"\x16AssignEmployeeResponse\x129\n" +
 	"\n" +
 	"assignment\x18\x01 \x01(\v2\x19.assignment.v1.AssignmentR\n" +
-	"assignment\x12\x1a\n" +
-	"\brevision\x18\x02 \x01(\x03R\brevision\"\xa4\x02\n" +
+	"assignment\"\xa4\x02\n" +
 	"\x18ReleaseAssignmentRequest\x12-\n" +
 	"\rassignment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\fassignmentId\x12\xd8\x01\n" +
 	"\vreleased_on\x18\x02 \x01(\v2\x11.google.type.DateB\xa3\x01\xbaH\x9f\x01\xba\x01\x98\x01\n" +
 	"\x11released_on.valid\x12)released_on must be a valid calendar date\x1aXthis.year >= 1 && this.month >= 1 && this.month <= 12 && this.day >= 1 && this.day <= 31\xc8\x01\x01R\n" +
-	"releasedOn\"r\n" +
+	"releasedOn\"V\n" +
 	"\x19ReleaseAssignmentResponse\x129\n" +
 	"\n" +
 	"assignment\x18\x01 \x01(\v2\x19.assignment.v1.AssignmentR\n" +
-	"assignment\x12\x1a\n" +
-	"\brevision\x18\x02 \x01(\x03R\brevision\"l\n" +
+	"assignment\"l\n" +
 	"\x17RevokeAssignmentRequest\x12-\n" +
 	"\rassignment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\fassignmentId\x12\"\n" +
 	"\x06reason\x18\x02 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x01\x18\xf4\x03R\x06reason\"6\n" +
-	"\x18RevokeAssignmentResponse\x12\x1a\n" +
-	"\brevision\x18\x01 \x01(\x03R\brevision2\xc6\x02\n" +
+	"\xbaH\ar\x05\x10\x01\x18\xf4\x03R\x06reason\"\x1a\n" +
+	"\x18RevokeAssignmentResponse\"i\n" +
+	"\x14RevokeReleaseRequest\x12-\n" +
+	"\rassignment_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\fassignmentId\x12\"\n" +
+	"\x06reason\x18\x02 \x01(\tB\n" +
+	"\xbaH\ar\x05\x10\x01\x18\xf4\x03R\x06reason\"\x17\n" +
+	"\x15RevokeReleaseResponse2\xa2\x03\n" +
 	"\x18AssignmentCommandService\x12]\n" +
 	"\x0eAssignEmployee\x12$.assignment.v1.AssignEmployeeRequest\x1a%.assignment.v1.AssignEmployeeResponse\x12f\n" +
 	"\x11ReleaseAssignment\x12'.assignment.v1.ReleaseAssignmentRequest\x1a(.assignment.v1.ReleaseAssignmentResponse\x12c\n" +
-	"\x10RevokeAssignment\x12&.assignment.v1.RevokeAssignmentRequest\x1a'.assignment.v1.RevokeAssignmentResponseB\xce\x01\n" +
+	"\x10RevokeAssignment\x12&.assignment.v1.RevokeAssignmentRequest\x1a'.assignment.v1.RevokeAssignmentResponse\x12Z\n" +
+	"\rRevokeRelease\x12#.assignment.v1.RevokeReleaseRequest\x1a$.assignment.v1.RevokeReleaseResponseB\xce\x01\n" +
 	"\x11com.assignment.v1B\x1dAssignmentCommandServiceProtoP\x01ZEgithub.com/mickamy/employee-management/gen/assignment/v1;assignmentv1\xa2\x02\x03AXX\xaa\x02\rAssignment.V1\xca\x02\rAssignment\\V1\xe2\x02\x19Assignment\\V1\\GPBMetadata\xea\x02\x0eAssignment::V1b\x06proto3"
 
 var (
@@ -397,7 +463,7 @@ func file_assignment_v1_assignment_command_service_proto_rawDescGZIP() []byte {
 	return file_assignment_v1_assignment_command_service_proto_rawDescData
 }
 
-var file_assignment_v1_assignment_command_service_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_assignment_v1_assignment_command_service_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_assignment_v1_assignment_command_service_proto_goTypes = []any{
 	(*AssignEmployeeRequest)(nil),     // 0: assignment.v1.AssignEmployeeRequest
 	(*AssignEmployeeResponse)(nil),    // 1: assignment.v1.AssignEmployeeResponse
@@ -405,27 +471,31 @@ var file_assignment_v1_assignment_command_service_proto_goTypes = []any{
 	(*ReleaseAssignmentResponse)(nil), // 3: assignment.v1.ReleaseAssignmentResponse
 	(*RevokeAssignmentRequest)(nil),   // 4: assignment.v1.RevokeAssignmentRequest
 	(*RevokeAssignmentResponse)(nil),  // 5: assignment.v1.RevokeAssignmentResponse
-	(Position)(0),                     // 6: assignment.v1.Position
-	(*date.Date)(nil),                 // 7: google.type.Date
-	(*Assignment)(nil),                // 8: assignment.v1.Assignment
+	(*RevokeReleaseRequest)(nil),      // 6: assignment.v1.RevokeReleaseRequest
+	(*RevokeReleaseResponse)(nil),     // 7: assignment.v1.RevokeReleaseResponse
+	(Position)(0),                     // 8: assignment.v1.Position
+	(*date.Date)(nil),                 // 9: google.type.Date
+	(*Assignment)(nil),                // 10: assignment.v1.Assignment
 }
 var file_assignment_v1_assignment_command_service_proto_depIdxs = []int32{
-	6, // 0: assignment.v1.AssignEmployeeRequest.position:type_name -> assignment.v1.Position
-	7, // 1: assignment.v1.AssignEmployeeRequest.assigned_on:type_name -> google.type.Date
-	8, // 2: assignment.v1.AssignEmployeeResponse.assignment:type_name -> assignment.v1.Assignment
-	7, // 3: assignment.v1.ReleaseAssignmentRequest.released_on:type_name -> google.type.Date
-	8, // 4: assignment.v1.ReleaseAssignmentResponse.assignment:type_name -> assignment.v1.Assignment
-	0, // 5: assignment.v1.AssignmentCommandService.AssignEmployee:input_type -> assignment.v1.AssignEmployeeRequest
-	2, // 6: assignment.v1.AssignmentCommandService.ReleaseAssignment:input_type -> assignment.v1.ReleaseAssignmentRequest
-	4, // 7: assignment.v1.AssignmentCommandService.RevokeAssignment:input_type -> assignment.v1.RevokeAssignmentRequest
-	1, // 8: assignment.v1.AssignmentCommandService.AssignEmployee:output_type -> assignment.v1.AssignEmployeeResponse
-	3, // 9: assignment.v1.AssignmentCommandService.ReleaseAssignment:output_type -> assignment.v1.ReleaseAssignmentResponse
-	5, // 10: assignment.v1.AssignmentCommandService.RevokeAssignment:output_type -> assignment.v1.RevokeAssignmentResponse
-	8, // [8:11] is the sub-list for method output_type
-	5, // [5:8] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	8,  // 0: assignment.v1.AssignEmployeeRequest.position:type_name -> assignment.v1.Position
+	9,  // 1: assignment.v1.AssignEmployeeRequest.assigned_on:type_name -> google.type.Date
+	10, // 2: assignment.v1.AssignEmployeeResponse.assignment:type_name -> assignment.v1.Assignment
+	9,  // 3: assignment.v1.ReleaseAssignmentRequest.released_on:type_name -> google.type.Date
+	10, // 4: assignment.v1.ReleaseAssignmentResponse.assignment:type_name -> assignment.v1.Assignment
+	0,  // 5: assignment.v1.AssignmentCommandService.AssignEmployee:input_type -> assignment.v1.AssignEmployeeRequest
+	2,  // 6: assignment.v1.AssignmentCommandService.ReleaseAssignment:input_type -> assignment.v1.ReleaseAssignmentRequest
+	4,  // 7: assignment.v1.AssignmentCommandService.RevokeAssignment:input_type -> assignment.v1.RevokeAssignmentRequest
+	6,  // 8: assignment.v1.AssignmentCommandService.RevokeRelease:input_type -> assignment.v1.RevokeReleaseRequest
+	1,  // 9: assignment.v1.AssignmentCommandService.AssignEmployee:output_type -> assignment.v1.AssignEmployeeResponse
+	3,  // 10: assignment.v1.AssignmentCommandService.ReleaseAssignment:output_type -> assignment.v1.ReleaseAssignmentResponse
+	5,  // 11: assignment.v1.AssignmentCommandService.RevokeAssignment:output_type -> assignment.v1.RevokeAssignmentResponse
+	7,  // 12: assignment.v1.AssignmentCommandService.RevokeRelease:output_type -> assignment.v1.RevokeReleaseResponse
+	9,  // [9:13] is the sub-list for method output_type
+	5,  // [5:9] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_assignment_v1_assignment_command_service_proto_init() }
@@ -440,7 +510,7 @@ func file_assignment_v1_assignment_command_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_assignment_v1_assignment_command_service_proto_rawDesc), len(file_assignment_v1_assignment_command_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
