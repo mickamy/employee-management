@@ -54,6 +54,8 @@ func ToAssignmentPosition(p assignmentv1.Position) amodel.Position {
 		return amodel.PositionMember
 	case assignmentv1.Position_POSITION_MANAGER:
 		return amodel.PositionManager
+	case assignmentv1.Position_POSITION_UNSPECIFIED:
+		return ""
 	}
 	return ""
 }
