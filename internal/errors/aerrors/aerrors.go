@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("not found")
-	ErrConflict = errors.New("already exists")
+	ErrNotFound     = errors.New("not found")
+	ErrConflict     = errors.New("already exists")
+	ErrPrecondition = errors.New("precondition failed")
 )
 
 // NotFound reports that the named entity does not exist.
@@ -21,4 +22,9 @@ func NotFound(entity string) error {
 // Conflict reports that the described value is already taken.
 func Conflict(detail string) error {
 	return fmt.Errorf("%s: %w", detail, ErrConflict)
+}
+
+// Precondition reports that the current state does not allow the operation.
+func Precondition(detail string) error {
+	return fmt.Errorf("%s: %w", detail, ErrPrecondition)
 }
