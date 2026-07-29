@@ -3,9 +3,6 @@
 package converter
 
 import (
-	"fmt"
-
-	"github.com/google/uuid"
 	organizationv1 "github.com/mickamy/employee-management/gen/organization/v1"
 	"github.com/mickamy/employee-management/internal/feature/organization/model"
 	"github.com/mickamy/employee-management/internal/lib/converters"
@@ -18,20 +15,4 @@ func DepartmentToOrganizationv1(src model.Department) *organizationv1.Department
 		Code: src.Code,
 		Name: src.Name,
 	}
-}
-
-// DepartmentFromOrganizationv1 maps *organizationv1.Department to model.Department.
-func DepartmentFromOrganizationv1(src *organizationv1.Department) (model.Department, error) {
-	if src == nil {
-		return model.Department{}, nil
-	}
-	v1, err0 := uuid.Parse(src.GetId())
-	if err0 != nil {
-		return model.Department{}, fmt.Errorf("map model.Department.ID: %w", err0)
-	}
-	return model.Department{
-		ID:   v1,
-		Code: src.GetCode(),
-		Name: src.GetName(),
-	}, nil
 }

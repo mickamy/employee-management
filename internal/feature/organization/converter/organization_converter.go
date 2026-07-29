@@ -5,7 +5,7 @@ import (
 	"github.com/mickamy/employee-management/internal/feature/organization/model"
 )
 
-//go:generate go tool mapgen -types=model.Department:*organizationv1.Department -converter-pkg=../../../lib/converters -output=.
+//go:generate go tool mapgen -types=model.Department:*organizationv1.Department -direction=to -converter-pkg=../../../lib/converters -output=.
 
 var (
 	_ model.Department

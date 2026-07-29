@@ -3,9 +3,6 @@
 package converter
 
 import (
-	"fmt"
-
-	"github.com/google/uuid"
 	employeev1 "github.com/mickamy/employee-management/gen/employee/v1"
 	"github.com/mickamy/employee-management/internal/feature/employee/model"
 	"github.com/mickamy/employee-management/internal/lib/converters"
@@ -20,22 +17,4 @@ func EmployeeToEmployeev1(src model.Employee) *employeev1.Employee {
 		Email:   src.Email,
 		HiredOn: converters.ToDate(src.HiredOn),
 	}
-}
-
-// EmployeeFromEmployeev1 maps *employeev1.Employee to model.Employee.
-func EmployeeFromEmployeev1(src *employeev1.Employee) (model.Employee, error) {
-	if src == nil {
-		return model.Employee{}, nil
-	}
-	v1, err0 := uuid.Parse(src.GetId())
-	if err0 != nil {
-		return model.Employee{}, fmt.Errorf("map model.Employee.ID: %w", err0)
-	}
-	return model.Employee{
-		ID:      v1,
-		Code:    src.GetCode(),
-		Name:    src.GetName(),
-		Email:   src.GetEmail(),
-		HiredOn: converters.ToTime(src.GetHiredOn()),
-	}, nil
 }
