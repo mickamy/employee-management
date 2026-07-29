@@ -38,6 +38,9 @@ func (uc ListManagerHistory) Do(ctx context.Context, input ListManagerHistoryInp
 			return fmt.Errorf("fetch manager tenures: %w", err)
 		}
 		tenures = found
+		if len(tenures) == 0 {
+			return nil
+		}
 
 		ids := make([]uuid.UUID, 0, len(tenures))
 		seen := make(map[uuid.UUID]bool, len(tenures))
