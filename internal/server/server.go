@@ -24,12 +24,8 @@ func Handler(cfg di.Config, handlers Handlers) http.Handler {
 
 	mux := http.NewServeMux()
 
-	mux.Handle(assignmentv1connect.NewAssignmentCommandServiceHandler(
-		assignmentv1connect.UnimplementedAssignmentCommandServiceHandler{}, opts...,
-	))
-	mux.Handle(assignmentv1connect.NewAssignmentQueryServiceHandler(
-		assignmentv1connect.UnimplementedAssignmentQueryServiceHandler{}, opts...,
-	))
+	mux.Handle(assignmentv1connect.NewAssignmentCommandServiceHandler(handlers.Assignment, opts...))
+	mux.Handle(assignmentv1connect.NewAssignmentQueryServiceHandler(handlers.Assignment, opts...))
 	mux.Handle(employeev1connect.NewEmployeeServiceHandler(handlers.Employee, opts...))
 	mux.Handle(organizationv1connect.NewOrganizationServiceHandler(handlers.Organization, opts...))
 

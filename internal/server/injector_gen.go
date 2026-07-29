@@ -4,16 +4,19 @@ package server
 
 import (
 	di "github.com/mickamy/employee-management/internal/di"
-	handler "github.com/mickamy/employee-management/internal/feature/employee/handler"
-	handler2 "github.com/mickamy/employee-management/internal/feature/organization/handler"
+	handler "github.com/mickamy/employee-management/internal/feature/assignment/handler"
+	handler2 "github.com/mickamy/employee-management/internal/feature/employee/handler"
+	handler3 "github.com/mickamy/employee-management/internal/feature/organization/handler"
 )
 
 // NewHandlers initializes dependencies and constructs Handlers.
 func NewHandlers(infra di.Infra) *Handlers {
-	employee := handler.NewEmployee(infra)
-	organization := handler2.NewOrganization(infra)
+	assignment := handler.NewAssignment(infra)
+	employee := handler2.NewEmployee(infra)
+	organization := handler3.NewOrganization(infra)
 
 	return &Handlers{
+		Assignment:   assignment,
 		Employee:     employee,
 		Organization: organization,
 	}
