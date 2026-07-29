@@ -218,8 +218,8 @@ func (r assignment) History(ctx context.Context, employeeID uuid.UUID) ([]model.
 	return assignments, nil
 }
 
-// listManagerTenures lives outside sqlc: it needs a nullable CASE column that
-// sqlc's inference types as non-nullable.
+// listManagerTenures lives outside sqlc: it needs a nullable CASE column
+// that sqlc infers as non-nullable.
 const listManagerTenures = `
 SELECT m.employee_id                             AS manager_employee_id,
        m.department_id,
