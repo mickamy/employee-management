@@ -78,6 +78,37 @@ func (q *Queries) GetEmployee(ctx context.Context, id uuid.UUID) (GetEmployeeRow
 	return i, err
 }
 
+const getEmployeeNames = `-- name: GetEmployeeNames :many
+SELECT id, name
+FROM employees
+WHERE id = ANY ($1::uuid[])
+`
+
+type GetEmployeeNamesRow struct {
+	ID   uuid.UUID
+	Name string
+}
+
+func (q *Queries) GetEmployeeNames(ctx context.Context, ids []uuid.UUID) ([]GetEmployeeNamesRow, error) {
+	rows, err := q.db.Query(ctx, getEmployeeNames, ids)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetEmployeeNamesRow
+	for rows.Next() {
+		var i GetEmployeeNamesRow
+		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listEmployees = `-- name: ListEmployees :many
 SELECT e.id, e.code, e.name, e.email, h.hired_on
 FROM employees AS e

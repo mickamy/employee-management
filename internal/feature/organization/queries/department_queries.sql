@@ -12,3 +12,6 @@ RETURNING id, code, name;
 SELECT id, code, name
 FROM departments
 ORDER BY code;
+
+-- name: DepartmentExists :one
+SELECT EXISTS (SELECT 1 FROM departments WHERE id = $1);
