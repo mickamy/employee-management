@@ -53,10 +53,10 @@ lint-fix:
 	golangci-lint run --fix
 
 compose-up:
-	docker compose up
+	docker compose up --build
 
 compose-up-d:
-	docker compose up -d --wait
+	docker compose up -d --build --wait
 
 compose-down:
 	docker compose down
