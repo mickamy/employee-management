@@ -43,3 +43,10 @@ make compose-up-d  # start dependencies via docker compose
 make db-migrate    # apply migrations (goose)
 go run ./cmd/server
 ```
+
+The frontend is a Remix v3 BFF under `frontend/`; Connect clients live on its server side only.
+
+```sh
+cd frontend && npm install
+make frontend-dev  # http://localhost:44100, expects the backend on :8080
+```

@@ -95,6 +95,12 @@ gen-injector:
 gen-sqlc:
 	go tool -modfile=tools/go.mod sqlc generate
 
+frontend-dev:
+	cd frontend && npm run dev
+
+frontend-typecheck:
+	cd frontend && npm run typecheck
+
 new-migration:
 	@if [ -z "$(name)" ]; then \
 		echo "Error: name is required. Usage: make new-migration name=migration_name"; \
