@@ -15,5 +15,58 @@ services:
       timeout: 5s
       retries: 10
 
+  # Only https-portal is published; everything else stays on the compose
+  # network.
+  migrate:
+    build:
+      context: .
+      target: migrate
+    command:
+      - postgres
+      - postgres://app:password@db:5432/employee_management?sslmode=disable
+      - up
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: .
+      target: backend
+    environment:
+      ENV: production
+      MODULE_ROOT: /src
+      PORT: "8080"
+      DATABASE_URL: postgres://app:password@db:5432/employee_management?sslmode=disable
+      DATABASE_WRITER_URL: postgres://app_writer:password@db:5432/employee_management?sslmode=disable
+      DATABASE_READER_URL: postgres://app_reader:password@db:5432/employee_management?sslmode=disable
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  frontend:
+    build: ./frontend
+    environment:
+      BACKEND_URL: http://backend:8080
+      PORT: "44100"
+    depends_on:
+      - backend
+
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAINS: "localhost -> http://frontend:44100"
+      STAGE: local
+    volumes:
+      - https-portal-data:/var/lib/https-portal
+    depends_on:
+      - frontend
+
 volumes:
   db-data:
+  https-portal-data:

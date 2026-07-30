@@ -39,7 +39,15 @@ follows Kawashima's immutable data model — see [docs/data-modeling.md](docs/da
 
 ```sh
 envsubst < .env.example > .env
-make compose-up-d  # start dependencies via docker compose
-make db-migrate    # apply migrations (goose)
-go run ./cmd/server
+make compose-up-d  # the whole stack behind https-portal: https://localhost (self-signed)
+```
+
+`docker compose up` runs everything — db, goose migrations, backend, frontend, and
+https-portal; only 80/443 are published. For iterating on one piece, run it natively
+against the compose database:
+
+```sh
+go run ./cmd/server        # backend on :8080
+cd frontend && npm install
+make frontend-dev          # http://localhost:44100, expects the backend on :8080
 ```
